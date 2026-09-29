@@ -21,8 +21,8 @@ import androidx.compose.ui.unit.sp
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun QuickAddBottomSheet(
-    onDismissRequest: () -> Unit, // Kullanıcı dışarıya veya aşağı kaydırdığında tetiklenecek fonksiyon
-    onActionClick: (QuickLogAction) -> Unit // Bir ikona tıklandığında "Hangi ikona tıklandı?" bilgisini yukarıya ileten callback
+    onDismissRequest: () -> Unit,
+    onActionClick: (QuickLogAction) -> Unit
 ) {
     ModalBottomSheet(
         onDismissRequest = onDismissRequest,
@@ -52,12 +52,11 @@ fun QuickAddBottomSheet(
                     .fillMaxWidth()
                     .padding(bottom = 32.dp)
             ) {
-                items(QuickLogAction.values()) { action ->
+                items(QuickLogAction.entries.toTypedArray()) { action ->
                     QuickActionItem(
                         action = action,
                         onClick = {
                             onActionClick(action)
-                            onDismissRequest()
                         }
                     )
                 }

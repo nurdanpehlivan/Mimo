@@ -12,20 +12,26 @@ data class JournalEntryEntity(
     val createdAt: Long = System.currentTimeMillis(),
     val entryType: EntryType = EntryType.TEXT,
 
-    // Opsiyonel / Modüler Alanlar
-    val moodRating: Int? = null,           // 1-5 arası ruh hali puanı
-    val mediaUri: String? = null,          // Fotoğraf veya ses dosyasının cihazdaki yerel yolu
-    val calorieEstimate: Int? = null,      // Gemini analiziyle gelen kalori miktarı
-    val expenseAmount: Double? = null,      // Harcama tutarı
-    val expenseCategory: String? = null,   // Harcama kategorisi (Yemek, Ulaşım, Sağlık vb.)
-    val waterAmountMl: Int? = null,        // Su içme miktarı (ml)
-    val isEncrypted: Boolean = false,       // Biyometrik ile ekstra gizlenecek mi?
+    val moodRating: Int? = null,
+    val mediaUri: String? = null,
+    val expenseAmount: Double? = null,
+    val expenseCategory: String? = null,
+    val waterAmountMl: Int? = null,
+    val isEncrypted: Boolean = false,
 
-    val imagePath: String? = null,
+    val imagePaths: String? = null, // Virgülle ayrılmış çoklu resim yolları
     val audioPath: String? = null,
 
     val calories: Int? = null,
     val protein: Double? = null,
     val carbs: Double? = null,
-    val fat: Double? = null
+    val fat: Double? = null,
+    
+    val weightKg: Double? = null,
+    val sleepHours: Double? = null,
+    val alcoholUnits: String? = null,
+    val coffeeCups: Int? = null,
+
+    val latitude: Double? = null,
+    val longitude: Double? = null
 )

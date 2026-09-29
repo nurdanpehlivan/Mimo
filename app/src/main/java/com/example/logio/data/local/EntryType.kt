@@ -8,5 +8,16 @@ enum class EntryType {
     WATER,      // Su içme kaydı
     LOCATION,   // Konum kaydı
     VOICE,      // Ses kaydı
-    PHOTO       // Fotoğraflı anı
+    PHOTO,      // Fotoğraflı anı
+    TODO,       // Yapılacaklar listesi
+    DRAW,       // Çizim kaydı
+    FILM,       // Film/Dizi kaydı
+    BOOK,       // Kitap kaydı
+    MUSIC,      // Müzik kaydı
+    SLEEP,      // Uyku kaydı
+    COFFEE,     // Kahve tüketimi
+    ALCOHOL,    // Alkol tüketimi
+    VIDEO,      // Video anısı
+    STEPS,      // Adım kaydı
+    LINK        // Bağlantı/Link kaydı
 }

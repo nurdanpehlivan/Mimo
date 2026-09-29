@@ -6,11 +6,10 @@ import androidx.room.TypeConverters
 
 @Database(
     entities = [JournalEntryEntity::class],
-    version = 8,
+    version = 13,
     exportSchema = false
 )
 @TypeConverters(Converters::class)
 abstract class LogioDatabase : RoomDatabase() {
-
     abstract fun journalDao(): JournalDao
 }

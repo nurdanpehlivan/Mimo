@@ -4,6 +4,7 @@ import com.example.logio.data.local.EntryType
 import com.example.logio.data.local.JournalEntryEntity
 import java.text.SimpleDateFormat
 import java.util.*
+
 fun isSameCalendarDay(timeMillisA: Long, timeMillisB: Long): Boolean {
     val calA = Calendar.getInstance().apply { timeInMillis = timeMillisA }
     val calB = Calendar.getInstance().apply { timeInMillis = timeMillisB }
@@ -16,7 +17,7 @@ fun formatTodayLabel(): String {
     return SimpleDateFormat("dd MMMM yyyy", Locale("tr")).format(now)
 }
 
-fun getWaterTotalForDay(entries: List, dayMillis: Long): Int {
+fun getWaterTotalForDay(entries: List<JournalEntryEntity>, dayMillis: Long): Int {
     val today = Calendar.getInstance().apply { timeInMillis = dayMillis }
     return entries
         .filter { entry ->
