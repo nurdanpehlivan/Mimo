@@ -101,7 +101,7 @@ class MainActivity : FragmentActivity() {
     }
 }
 
-/** Alt bardaki sekmeler arasında geçiş; tüm ekranlar aynı TimelineViewModel'i paylaşır. */
+/** Alt bardaki sekmeler arasında geçiş; İstatistik dışındaki ekranlar aynı TimelineViewModel'i paylaşır. */
 @Composable
 private fun LogioRoot(viewModel: TimelineViewModel = hiltViewModel()) {
     var selectedTab by rememberSaveable { mutableStateOf(BottomTab.JOURNAL) }
@@ -116,7 +116,7 @@ private fun LogioRoot(viewModel: TimelineViewModel = hiltViewModel()) {
     when (selectedTab) {
         BottomTab.JOURNAL -> TimelineScreen(viewModel = viewModel, onNavigate = { selectedTab = it })
         BottomTab.CALENDAR -> CalendarScreen(viewModel = viewModel, bottomBar = bottomBar)
-        BottomTab.STATS -> AnalysisScreen(viewModel = viewModel, bottomBar = bottomBar)
+        BottomTab.STATS -> AnalysisScreen(bottomBar = bottomBar)
         BottomTab.PROFILE -> ProfileScreen(viewModel = viewModel, bottomBar = bottomBar)
     }
 }
