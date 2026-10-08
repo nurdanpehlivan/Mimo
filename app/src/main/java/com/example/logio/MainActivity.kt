@@ -1,3 +1,10 @@
+/*
+ * MainActivity: Uygulamanın giriş kapısı (tek Activity).
+ *
+ * Açılışta dili uygular, uygulama kilidi açıksa önce kilit ekranını gösterir,
+ * sonra LogioRoot ile alt menüdeki dört sekmeyi (Günlük, Takvim, İstatistik, Profil) çizer.
+ * 1 dakikadan uzun arka planda kalınca uygulamayı yeniden kilitler.
+ */
 package com.example.logio
 
 import android.content.Context
@@ -14,7 +21,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.fragment.app.FragmentActivity
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.logio.ui.analysis.AnalysisScreen
 import com.example.logio.ui.calendar.CalendarScreen
 import com.example.logio.ui.navigation.BottomTab
@@ -22,14 +28,9 @@ import com.example.logio.ui.navigation.FloatingBottomBar
 import com.example.logio.ui.profile.ProfileScreen
 import com.example.logio.ui.theme.LogioTheme
 import com.example.logio.ui.timeline.TimelineScreen
-import com.example.logio.ui.timeline.TimelineViewModel
 import com.example.logio.util.AppLocale
 import com.example.logio.ui.lock.LockScreen
 import com.example.logio.util.AppLock
-import com.google.firebase.Firebase
-import com.google.firebase.appcheck.appCheck
-import com.google.firebase.appcheck.debug.DebugAppCheckProviderFactory
-import com.google.firebase.initialize
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -45,12 +46,6 @@ class MainActivity : FragmentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         locked = savedInstanceState?.getBoolean(KEY_LOCKED) ?: AppLock.isEnabled(this)
-
-        // App Check Debug Provider'ı başlatıyoruz
-        Firebase.initialize(context = this)
-        Firebase.appCheck.installAppCheckProviderFactory(
-            DebugAppCheckProviderFactory.getInstance()
-        )
 
         enableEdgeToEdge()
         setContent {
@@ -101,9 +96,9 @@ class MainActivity : FragmentActivity() {
     }
 }
 
-/** Alt bardaki sekmeler arasında geçiş; İstatistik dışındaki ekranlar aynı TimelineViewModel'i paylaşır. */
+/** Alt bardaki sekmeler arasında geçiş. Her sekmenin kendi ViewModel'i vardır; hepsi aynı veritabanını dinler. */
 @Composable
-private fun LogioRoot(viewModel: TimelineViewModel = hiltViewModel()) {
+private fun LogioRoot() {
     var selectedTab by rememberSaveable { mutableStateOf(BottomTab.JOURNAL) }
 
     // Diğer sekmelerde geri tuşu önce Günlük'e döner
@@ -114,9 +109,9 @@ private fun LogioRoot(viewModel: TimelineViewModel = hiltViewModel()) {
     }
 
     when (selectedTab) {
-        BottomTab.JOURNAL -> TimelineScreen(viewModel = viewModel, onNavigate = { selectedTab = it })
-        BottomTab.CALENDAR -> CalendarScreen(viewModel = viewModel, bottomBar = bottomBar)
+        BottomTab.JOURNAL -> TimelineScreen(onNavigate = { selectedTab = it })
+        BottomTab.CALENDAR -> CalendarScreen(bottomBar = bottomBar)
         BottomTab.STATS -> AnalysisScreen(bottomBar = bottomBar)
-        BottomTab.PROFILE -> ProfileScreen(viewModel = viewModel, bottomBar = bottomBar)
+        BottomTab.PROFILE -> ProfileScreen(bottomBar = bottomBar)
     }
 }

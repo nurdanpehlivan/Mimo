@@ -1,3 +1,10 @@
+/*
+ * ShareReceiverActivity: Başka bir uygulamadan "Paylaş → Logio'ya kaydet" ile gelen linkleri karşılar.
+ *
+ * Link hemen günlüğe kaydedilir (aynı link daha önce eklendiyse yenisi açılmaz), önizleme resmi
+ * arka planda tamamlanır ve alttan açılan küçük bir pencerede başlık düzenleme / geri alma sunulur.
+ * Günlüğü göstermediği için uygulama kilidi sormaz.
+ */
 package com.example.logio.ui.share
 
 import com.example.logio.ui.theme.logioFieldColors
@@ -37,7 +44,7 @@ import androidx.lifecycle.lifecycleScope
 import coil.compose.AsyncImage
 import com.example.logio.MainActivity
 import com.example.logio.data.local.EntryType
-import com.example.logio.data.local.JournalDao
+import com.example.logio.data.journal.JournalRepository
 import com.example.logio.data.local.JournalEntryEntity
 import com.example.logio.data.remote.LinkPreviewFetcher
 import com.example.logio.ui.theme.LogioTheme
@@ -155,7 +162,7 @@ fun parseSharedText(text: String, subject: String?, res: Resources): SharedLink?
 @AndroidEntryPoint
 class ShareReceiverActivity : ComponentActivity() {
 
-    @Inject lateinit var journalDao: JournalDao
+    @Inject lateinit var journalRepository: JournalRepository
     @Inject lateinit var linkPreviewFetcher: LinkPreviewFetcher
 
     private var savedEntry by mutableStateOf<JournalEntryEntity?>(null)
@@ -181,7 +188,7 @@ class ShareReceiverActivity : ComponentActivity() {
         lifecycleScope.launch {
             if (restoredId != 0L) {
                 wasAlreadySaved = savedInstanceState?.getBoolean(KEY_ALREADY_SAVED) ?: false
-                savedEntry = journalDao.getEntryById(restoredId)
+                savedEntry = journalRepository.getById(restoredId)
             }
             if (savedEntry == null) saveLink(link)
         }
@@ -214,7 +221,7 @@ class ShareReceiverActivity : ComponentActivity() {
 
     // Link açılır açılmaz kaydedilir; aynı link daha önce eklendiyse yeni kayıt açılmaz
     private suspend fun saveLink(link: SharedLink) {
-        val existing = journalDao.getEntriesByType(EntryType.LINK).first().firstOrNull { it.content == link.url }
+        val existing = journalRepository.entriesOfType(EntryType.LINK).first().firstOrNull { it.content == link.url }
         if (existing != null) {
             wasAlreadySaved = true
             savedEntry = existing
@@ -226,15 +233,15 @@ class ShareReceiverActivity : ComponentActivity() {
             entryType = EntryType.LINK,
             imagePaths = link.thumbnailUrl
         )
-        val id = journalDao.insertEntry(entry)
+        val id = journalRepository.insert(entry)
         savedEntry = entry.copy(id = id)
 
         // YouTube dışındaki linklerde önizleme görseli sayfanın og:image etiketinden alınır
         if (link.thumbnailUrl == null) {
             val imageUrl = linkPreviewFetcher.fetch(link.url)?.imageUrl ?: return
-            val current = journalDao.getEntryById(id) ?: return
+            val current = journalRepository.getById(id) ?: return
             val updated = current.copy(imagePaths = imageUrl)
-            journalDao.updateEntry(updated)
+            journalRepository.update(updated)
             if (savedEntry?.id == id) savedEntry = updated
         }
     }
@@ -244,7 +251,7 @@ class ShareReceiverActivity : ComponentActivity() {
         lifecycleScope.launch {
             val newTitle = editedTitle.trim()
             if (entry != null && newTitle.isNotBlank() && newTitle != entry.title) {
-                journalDao.updateEntry(entry.copy(title = newTitle))
+                journalRepository.update(entry.copy(title = newTitle))
             }
             if (openJournal) {
                 startActivity(
@@ -259,7 +266,7 @@ class ShareReceiverActivity : ComponentActivity() {
     private fun undoAndFinish() {
         val entry = savedEntry
         lifecycleScope.launch {
-            if (entry != null && !wasAlreadySaved) journalDao.deleteEntry(entry)
+            if (entry != null && !wasAlreadySaved) journalRepository.delete(entry)
             Toast.makeText(this@ShareReceiverActivity, getString(R.string.share_undone), Toast.LENGTH_SHORT).show()
             finish()
         }

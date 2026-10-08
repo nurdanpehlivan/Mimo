@@ -1,3 +1,7 @@
+/*
+ * AnalysisStyle: İstatistik sekmesinin kartları ve grafikleri arasında paylaşılan
+ * renkler, sayı biçimlendirme ve çubuk çizme yardımcısı.
+ */
 package com.example.logio.ui.analysis
 
 import androidx.compose.ui.geometry.CornerRadius
@@ -9,8 +13,6 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import com.example.logio.ui.theme.MimoNavy
 import com.example.logio.ui.theme.MimoNavyMuted
 import java.util.Locale
-
-// İstatistik ekranındaki kartların ve grafiklerin ortak renkleri ve yardımcıları
 
 internal val TrLocale: Locale get() = Locale.getDefault()
 

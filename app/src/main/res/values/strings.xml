@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Logio</string>
+    <string name="app_name" translatable="false">Logio</string>
     <!-- Hızlı ekleme -->
     <string name="action_note">Not</string>
     <string name="action_mood">Ruh Hali</string>
@@ -182,16 +182,6 @@
     <string name="language">Dil</string>
     <string name="language_system">Sistem dili</string>
 
-    <!-- App Lock -->
-    <string name="settings_app_lock">Uygulama Kilidi</string>
-    <string name="settings_app_lock_desc">Açılışta parmak izi veya PIN iste</string>
-    <string name="lock_screen_title">Günlüğün Kilitli</string>
-    <string name="lock_screen_desc">Devam etmek için kimliğini doğrula</string>
-    <string name="lock_auth_reason">Günlüğüne erişmek için kimlik doğrulaması gerekiyor</string>
-    <string name="lock_auth_failed">Kimlik doğrulama başarısız</string>
-    <string name="lock_auth_error">Hata: %s</string>
-    <string name="lock_unlock_button">Kilidi Aç</string>
-
     <!-- Yolculuk -->
     <string name="journey_weekly">Haftalık Özet</string>
     <string name="journey_weekly_desc">Son 7 günün fotoğrafları</string>
@@ -295,10 +285,8 @@
     <string name="dlg_sleep_range">0 ile %d saat arası gir (örn. 7,5)</string>
     <string name="dlg_sleep_example">Örn. 7,5</string>
     <string name="dlg_add_expense">Harcama Ekle</string>
-    <string name="dlg_description">Açıklama</string>
     <string name="dlg_amount_currency">Miktar (₺)</string>
     <string name="dlg_coffee">Kahve Keyfi</string>
-    <string name="dlg_which_cup">Bugün kaçıncı fincan?</string>
     <string name="dlg_cup_count">Fincan Sayısı</string>
     <string name="dlg_alcohol">Alkol Tüketimi</string>
     <string name="dlg_amount">Miktar</string>
@@ -342,8 +330,7 @@
     <string name="voice_not_transcribed">Henüz yazıya çevrilmedi.</string>
     <string name="voice_transcribing">Çevriliyor...</string>
     <string name="voice_transcribe">Yazıya Çevir</string>
-    <string name="steps_no_sensor">Sensör yok</string>
-    <string name="steps_enable_permission">İzni aç</string>
+    <string name="steps_connect_health">Health Connect’ten al</string>
     <string name="goal_value">Hedef %s</string>
     <string name="sleep_no_record">Kayıt yok</string>
     <string name="sleep_too_little">Yetersiz</string>

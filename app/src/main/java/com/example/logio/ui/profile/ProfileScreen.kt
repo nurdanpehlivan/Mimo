@@ -1,3 +1,10 @@
+/*
+ * ProfileScreen: Profil sekmesinin arayüzü.
+ *
+ * Başlık kartı (isim, seri), istatistik ızgarası, rozetler, en çok kullanılan türler,
+ * "Geçmişten bir anı" kartı ve ayarlar (dil, uygulama kilidi) burada çizilir.
+ * Hesaplar ProfileViewModel'de (ProfileStats.kt) yapılır; bu dosya yalnızca gösterir.
+ */
 package com.example.logio.ui.profile
 
 import com.example.logio.ui.theme.logioFieldColors
@@ -64,7 +71,6 @@ import com.example.logio.ui.theme.MimoPink
 import com.example.logio.ui.theme.MimoPurple
 import coil.compose.AsyncImage
 import com.example.logio.ui.timeline.EntryDetailSheet
-import com.example.logio.ui.timeline.TimelineViewModel
 import com.example.logio.ui.timeline.displayEntryContent
 import com.example.logio.ui.timeline.displayEntryTitle
 import com.example.logio.ui.timeline.entryLook
@@ -83,91 +89,6 @@ private val CardBorder = Color(0xFFEDE8F7)
 private val InkPrimary = MimoNavy
 private val InkSecondary = MimoNavyMuted
 private val InkMuted = Color(0xFF8A90B4)
-private const val TOP_TYPE_COUNT = 5
-
-
-// ---------- Profil özeti (yalnızca okunan kayıtlardan) ----------
-
-private data class Badge(
-    val emoji: String,
-    @StringRes val title: Int,
-    @StringRes val description: Int,
-    val current: Int,
-    val target: Int
-) {
-    val unlocked get() = current >= target
-}
-
-private data class ProfileSummary(
-    val totalEntries: Int,
-    val activeDays: Int,
-    val currentStreak: Int,
-    val longestStreak: Int,
-    val firstDay: LocalDate?,
-    val photoCount: Int,
-    val totalWaterMl: Int,
-    val topTypes: List<Pair<EntryType, Int>>,
-    val badges: List<Badge>
-)
-
-private fun summarizeProfile(
-    entries: List<JournalEntryEntity>,
-    waterGoalMl: Int,
-    zone: ZoneId,
-    today: LocalDate
-): ProfileSummary {
-    fun dayOf(entry: JournalEntryEntity) = Instant.ofEpochMilli(entry.createdAt).atZone(zone).toLocalDate()
-
-    val days = entries.mapTo(sortedSetOf()) { dayOf(it) }
-
-    // Güncel seri: bugünden (bugün kayıt yoksa dünden) geriye kesintisiz günler
-    var cursor = if (today in days) today else today.minusDays(1)
-    var currentStreak = 0
-    while (cursor in days) {
-        currentStreak++
-        cursor = cursor.minusDays(1)
-    }
-
-    var longestStreak = 0
-    var run = 0
-    var previous: LocalDate? = null
-    for (day in days) {
-        run = if (previous != null && ChronoUnit.DAYS.between(previous, day) == 1L) run + 1 else 1
-        longestStreak = maxOf(longestStreak, run)
-        previous = day
-    }
-
-    val typeCounts = entries.groupingBy { it.entryType }.eachCount()
-    val photoCount = entries.filter { it.entryType == EntryType.PHOTO }
-        .sumOf { entry -> entry.imagePaths?.split(",")?.count { it.isNotBlank() }?.coerceAtLeast(1) ?: 1 }
-    val waterEntries = entries.filter { it.entryType == EntryType.WATER }
-    val waterGoalDays = waterEntries
-        .groupBy { dayOf(it) }
-        .count { (_, dayEntries) -> dayEntries.sumOf { it.waterAmountMl ?: 0 } >= waterGoalMl }
-
-    val badges = listOf(
-        Badge("🌱", R.string.badge_first_step, R.string.badge_first_step_desc, entries.size, 1),
-        Badge("🔥", R.string.badge_habit, R.string.badge_habit_desc, longestStreak, 7),
-        Badge("🏆", R.string.badge_determined, R.string.badge_determined_desc, longestStreak, 30),
-        Badge("💯", R.string.badge_hundred, R.string.badge_hundred_desc, entries.size, 100),
-        Badge("📸", R.string.badge_photo_hunter, R.string.badge_photo_hunter_desc, photoCount, 20),
-        Badge("💧", R.string.badge_water, R.string.badge_water_desc, waterGoalDays, 7),
-        Badge("🧭", R.string.badge_explorer, R.string.badge_explorer_desc, typeCounts[EntryType.LOCATION] ?: 0, 10),
-        Badge("🎨", R.string.badge_versatile, R.string.badge_versatile_desc, typeCounts.size, 10)
-    )
-
-    return ProfileSummary(
-        totalEntries = entries.size,
-        activeDays = days.size,
-        currentStreak = currentStreak,
-        longestStreak = longestStreak,
-        firstDay = days.firstOrNull(),
-        photoCount = photoCount,
-        totalWaterMl = waterEntries.sumOf { it.waterAmountMl ?: 0 },
-        topTypes = typeCounts.entries.sortedByDescending { it.value }.take(TOP_TYPE_COUNT).map { it.key to it.value },
-        badges = badges
-    )
-}
 
 private fun formatNumber(value: Int): String = String.format(TrLocale, "%,d", value)
 
@@ -175,17 +96,15 @@ private fun formatNumber(value: Int): String = String.format(TrLocale, "%,d", va
 
 @Composable
 fun ProfileScreen(
-    viewModel: TimelineViewModel = hiltViewModel(),
+    viewModel: ProfileViewModel = hiltViewModel(),
     bottomBar: @Composable () -> Unit = {}
 ) {
     val entries by viewModel.entries.collectAsState()
     val profile by viewModel.profile.collectAsState()
+    val profileSummary by viewModel.summary.collectAsState()
 
     val zone = remember { ZoneId.systemDefault() }
     val today = remember { LocalDate.now(zone) }
-    val summary = remember(entries, profile.waterGoalMl) {
-        summarizeProfile(entries, profile.waterGoalMl, zone, today)
-    }
     var showEditDialog by remember { mutableStateOf(false) }
     var detailEntry by remember { mutableStateOf<JournalEntryEntity?>(null) }
     val context = LocalContext.current
@@ -195,6 +114,8 @@ fun ProfileScreen(
 
     MimoBackground {
         Scaffold(containerColor = Color.Transparent, bottomBar = bottomBar) { innerPadding ->
+            // İlk hesap arka planda sürerken yalnızca alt menü görünür
+            val summary = profileSummary ?: return@Scaffold
             Column(
                 modifier = Modifier
                     .fillMaxSize()

@@ -1,19 +1,24 @@
+/*
+ * AnalysisViewModel: İstatistik sekmesinin ViewModel'i.
+ *
+ * Kayıtları iki aşamada özetler: önce gün gün (summarizeDays), sonra seçili dönem için
+ * (computePeriodStats). Hesaplar arka planda (Dispatchers.Default) yapılır, ekran donmaz.
+ * Hafta / Ay / Yıl seçimi de burada tutulur (selectPeriod).
+ */
 package com.example.logio.ui.analysis
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.logio.data.local.JournalDao
+import com.example.logio.data.journal.JournalRepository
 import com.example.logio.data.local.JournalEntryEntity
 import com.example.logio.data.profile.ProfileRepository
 import com.example.logio.data.profile.UserProfile
-import com.example.logio.data.steps.StepCounterManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
@@ -40,12 +45,11 @@ private class DayIndex(
 
 /**
  * İstatistikleri ekran dışında, arka planda hesaplar.
- * Kayıtlar Room'dan doğrudan okunur; yeni kayıt eklenince istatistikler kendiliğinden güncellenir.
+ * Kayıtlar JournalRepository üzerinden okunur; yeni kayıt eklenince istatistikler kendiliğinden güncellenir.
  */
 @HiltViewModel
 class AnalysisViewModel @Inject constructor(
-    journalDao: JournalDao,
-    stepCounterManager: StepCounterManager,
+    journalRepository: JournalRepository,
     profileRepository: ProfileRepository
 ) : ViewModel() {
 
@@ -53,14 +57,11 @@ class AnalysisViewModel @Inject constructor(
 
     private val period = MutableStateFlow(StatsPeriod.WEEK)
 
-    // 1. aşama: gün gün özet. Yalnızca kayıtlar ya da bugünkü sensör adımı değişince çalışır
-    private val dayIndex = combine(
-        journalDao.getAllEntries(),
-        stepCounterManager.uiState.map { it.todaySteps }.distinctUntilChanged()
-    ) { entries, sensorStepsToday ->
+    // 1. aşama: gün gün özet. Yalnızca kayıtlar değişince çalışır
+    private val dayIndex = journalRepository.entries.map { entries ->
         val zone = ZoneId.systemDefault()
         val today = LocalDate.now(zone)
-        DayIndex(entries, zone, today, summarizeDays(entries, zone, today, sensorStepsToday))
+        DayIndex(entries, zone, today, summarizeDays(entries, zone, today))
     }.flowOn(Dispatchers.Default)
 
     // 2. aşama: seçili dönemin özeti. Dönem değişince yalnızca bu kısım yeniden hesaplanır

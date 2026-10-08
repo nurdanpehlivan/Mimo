@@ -4,7 +4,6 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
-    alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
     alias(libs.plugins.google.services)
@@ -35,10 +34,7 @@ android {
         // Maps API Key (Manifest için)
         val mapsApiKey = secretsProperties.getProperty("MAPS_API_KEY") ?: "YOUR_FALLBACK_KEY"
         manifestPlaceholders["MAPS_API_KEY"] = mapsApiKey
-
-        // Gemini API Key (BuildConfig için)
-        val geminiApiKey = secretsProperties.getProperty("GEMINI_API_KEY") ?: ""
-        buildConfigField("String", "GEMINI_API_KEY", "\"$geminiApiKey\"")
+        // Gemini anahtarı artık uygulamada tutulmuyor: istekler Firebase AI Logic üzerinden gidiyor
     }
 
     buildTypes {
@@ -61,7 +57,6 @@ android {
     }
     buildFeatures {
         compose = true
-        viewBinding = true
         buildConfig = true
     }
 }
@@ -80,10 +75,6 @@ dependencies {
     // Biometric Auth
     implementation("androidx.biometric:biometric:1.2.0-alpha05")
 
-    // UI Support
-    implementation(libs.androidx.appcompat)
-    implementation(libs.androidx.constraintlayout)
-
     implementation(libs.hilt.android)
     add("ksp", libs.hilt.compiler)
     implementation(libs.androidx.hilt.navigation.compose)
@@ -93,20 +84,19 @@ dependencies {
     add("ksp", libs.room.compiler)
     implementation("net.zetetic:sqlcipher-android:4.6.1")
 
-    implementation(libs.androidx.navigation.compose)
-    implementation(libs.kotlinx.serialization.json)
-
     implementation(libs.coil.compose)
     implementation(libs.timber)
-    implementation("androidx.media3:media3-exoplayer:1.3.1")
-    implementation("androidx.media3:media3-common:1.3.1")
 
     implementation("com.google.maps.android:maps-compose:4.4.1")
     implementation(libs.play.services.maps)
     implementation("com.google.android.gms:play-services-location:21.3.0")
 
+    // Firebase: Gemini istekleri (AI Logic) ve App Check
+    // Test sürümü Debug sağlayıcısını, Play Store sürümü Play Integrity'yi kullanır (src/debug, src/release)
     implementation(platform("com.google.firebase:firebase-bom:34.19.0"))
-    implementation("com.google.firebase:firebase-appcheck-debug")
+    implementation("com.google.firebase:firebase-ai")
+    implementation("com.google.firebase:firebase-appcheck-playintegrity")
+    debugImplementation("com.google.firebase:firebase-appcheck-debug")
 
     // Media3 Transformer
     implementation("androidx.media3:media3-transformer:1.3.1")
@@ -115,12 +105,6 @@ dependencies {
 
     // Health Connect
     implementation("androidx.health.connect:connect-client:1.1.0-alpha11")
-
-    // Google AI Client SDK & Ktor Runtime
-    implementation("com.google.ai.client.generativeai:generativeai:0.9.0")
-    val ktorVersion = "2.3.12"
-    implementation("io.ktor:ktor-client-core:$ktorVersion")
-    implementation("io.ktor:ktor-client-okhttp:$ktorVersion")
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

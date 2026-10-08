@@ -1,3 +1,10 @@
+/*
+ * AnalysisCards: İstatistik sekmesindeki kartlar.
+ *
+ * Başlık (maskotlu tebrik), Hafta/Ay/Yıl seçici, ortak kart kabuğu (MetricCard) ve
+ * uyku, ruh hali, adım, beslenme/su, kahve, alkol ve harcama kartları burada çizilir.
+ * Kartların rengini, ikonunu ya da maskotunu değiştirmek için bakılacak yer bu dosyadır.
+ */
 package com.example.logio.ui.analysis
 
 import androidx.annotation.DrawableRes

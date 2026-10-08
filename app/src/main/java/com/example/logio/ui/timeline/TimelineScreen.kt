@@ -1,9 +1,14 @@
+/*
+ * TimelineScreen: Günlük sekmesinin (zaman tüneli) arayüzü.
+ *
+ * Maskotlu karşılama kartı, adım/uyku/su kartları, günlere göre gruplanmış kayıt listesi,
+ * arama, tarihe atlama ve "+" menüsü buradadır. Kayıt kartları (TimelineItemCard ve türlerine
+ * göre MealCard, VoiceNoteCard, TodoCard...) da bu dosyadadır; Takvim ve Profil de bu kartları kullanır.
+ * Veri TimelineViewModel'den, arama sonuçları SearchViewModel'den gelir.
+ */
 package com.example.logio.ui.timeline
 
-import android.Manifest
-import android.content.pm.PackageManager
 import android.net.Uri
-import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -61,6 +66,9 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -73,7 +81,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.content.ContextCompat
 import androidx.health.connect.client.HealthConnectClient
 import androidx.health.connect.client.PermissionController
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -81,7 +88,6 @@ import coil.compose.AsyncImage
 import com.example.logio.R
 import com.example.logio.data.local.EntryType
 import com.example.logio.data.local.JournalEntryEntity
-import com.example.logio.data.steps.StepCounterUiState
 import com.example.logio.ui.navigation.BottomTab
 import com.example.logio.ui.navigation.FloatingBottomBar
 import com.example.logio.ui.theme.MimoBackground
@@ -97,6 +103,8 @@ import com.example.logio.ui.share.LinkThumbnail
 import com.example.logio.ui.share.classifySharedLink
 import com.example.logio.ui.share.hostLabel
 import com.example.logio.ui.share.youtubeThumbnailUrl
+import com.example.logio.data.audio.VOICE_PLACEHOLDER
+import com.example.logio.util.EntryLauncher
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.text.SimpleDateFormat
@@ -107,6 +115,7 @@ import android.util.Log
 @Composable
 fun TimelineScreen(
     viewModel: TimelineViewModel = hiltViewModel(),
+    searchViewModel: SearchViewModel = hiltViewModel(),
     onNavigate: (BottomTab) -> Unit = {}
 ) {
     val entries by viewModel.entries.collectAsState()
@@ -118,14 +127,14 @@ fun TimelineScreen(
     val transcribingEntryIds by viewModel.transcribingEntryIds.collectAsState()
     val analysisError by viewModel.analysisError.collectAsState()
     val healthSleepState by viewModel.healthSleepState.collectAsState()
-    val stepCounterUiState by viewModel.stepCounterUiState.collectAsState()
 
-    val movieSearchResults by viewModel.movieSearchResults.collectAsState()
-    val bookSearchResults by viewModel.bookSearchResults.collectAsState()
-    val musicSearchResults by viewModel.musicSearchResults.collectAsState()
-    val isSearching by viewModel.isSearching.collectAsState()
+    // Film / kitap / müzik / konum arama pencereleri SearchViewModel'den beslenir
+    val movieSearchResults by searchViewModel.movieSearchResults.collectAsState()
+    val bookSearchResults by searchViewModel.bookSearchResults.collectAsState()
+    val musicSearchResults by searchViewModel.musicSearchResults.collectAsState()
+    val isSearching by searchViewModel.isSearching.collectAsState()
 
-    val locationSearchResults by viewModel.locationSearchResults.collectAsState()
+    val locationSearchResults by searchViewModel.locationSearchResults.collectAsState()
 
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
@@ -176,14 +185,6 @@ fun TimelineScreen(
     val todayWaterTotal = getWaterTotalForDay(entries, System.currentTimeMillis())
     val waterTarget = profile.waterGoalMl
 
-    val needsActivityRecognitionPermission = Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
-    var hasActivityRecognitionPermission by remember {
-        mutableStateOf(
-            !needsActivityRecognitionPermission ||
-                    ContextCompat.checkSelfPermission(context, Manifest.permission.ACTIVITY_RECOGNITION) == PackageManager.PERMISSION_GRANTED
-        )
-    }
-
     var showQuickMenu by remember { mutableStateOf(false) }
     var activeDialogAction by remember { mutableStateOf<DialogQuickAction?>(null) }
 
@@ -212,11 +213,6 @@ fun TimelineScreen(
         }
     )
 
-    val activityPermissionLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestPermission(),
-        onResult = { granted -> hasActivityRecognitionPermission = granted }
-    )
-
     LaunchedEffect(playbackError) {
         if (!playbackError.isNullOrBlank()) {
             snackbarHostState.showSnackbar(playbackError!!)
@@ -231,14 +227,14 @@ fun TimelineScreen(
         }
     }
 
-    LaunchedEffect(hasActivityRecognitionPermission, stepCounterUiState.isSensorAvailable) {
-        if (!stepCounterUiState.isSensorAvailable) {
-            viewModel.stopStepTracking()
-        } else if (!needsActivityRecognitionPermission || hasActivityRecognitionPermission) {
-            viewModel.startStepTracking()
-        } else {
-            viewModel.stopStepTracking()
+    // Adımlar yalnızca Health Connect'ten gelir: uygulama her öne geldiğinde (izin verilmişse) sessizce eşitlenir
+    val lifecycleOwner = LocalLifecycleOwner.current
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) viewModel.syncHealthData()
         }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
     }
 
     val dateKeyFormat = remember { SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()) }
@@ -461,15 +457,9 @@ fun TimelineScreen(
                         verticalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
                         HealthActivityCard(
-                            stepState = stepCounterUiState,
                             stepGoal = profile.stepGoal,
                             healthSteps = healthStepsToday,
-                            hasActivityRecognitionPermission = hasActivityRecognitionPermission,
-                            onEnableTrackingClick = {
-                                if (needsActivityRecognitionPermission) {
-                                    activityPermissionLauncher.launch(Manifest.permission.ACTIVITY_RECOGNITION)
-                                }
-                            },
+                            onConnectHealthClick = onHealthSyncClick,
                             sleepHours = latestSleepHours,
                             modifier = Modifier.fillMaxWidth()
                         )
@@ -571,9 +561,9 @@ fun TimelineScreen(
                                         onTranscribeClick = { viewModel.transcribeVoiceEntry(entry) },
                                         onDelete = { viewModel.deleteEntry(entry) },
                                         onTodoToggle = { indexTodo -> viewModel.toggleTodoItem(entry, indexTodo) },
-                                        onVideoClick = { viewModel.openVideo(context, entry) },
-                                        onLinkClick = { viewModel.openLink(context, entry) },
-                                        onLocationClick = { viewModel.openMap(context, entry) },
+                                        onVideoClick = { EntryLauncher.openVideo(context, entry) },
+                                        onLinkClick = { EntryLauncher.openLink(context, entry) },
+                                        onLocationClick = { EntryLauncher.openMap(context, entry) },
                                         onCardClick = { selectedEntryForDetail = entry }
                                     )
                                 }
@@ -679,13 +669,13 @@ fun TimelineScreen(
                 onAddAlcohol = { a, t -> viewModel.saveAlcoholEntry(a, t) },
                 onAddVideo = { uri, note -> viewModel.saveVideoEntry(uri.toString(), note) },
                 onAddLink = { t, u -> viewModel.saveLinkEntry(t, u) },
-                onSearchMovies = { viewModel.searchMovies(it) },
+                onSearchMovies = { searchViewModel.searchMovies(it) },
                 movieSearchResults = movieSearchResults,
-                onSearchBooks = { viewModel.searchBooks(it) },
+                onSearchBooks = { searchViewModel.searchBooks(it) },
                 bookSearchResults = bookSearchResults,
-                onSearchMusic = { viewModel.searchMusic(it) },
+                onSearchMusic = { searchViewModel.searchMusic(it) },
                 musicSearchResults = musicSearchResults,
-                onSearchLocations = { viewModel.searchLocations(it) },
+                onSearchLocations = { searchViewModel.searchLocations(it) },
                 locationSearchResults = locationSearchResults,
                 onSaveLocation = { place, note -> viewModel.saveSelectedLocation(place, note) },
                 isSearching = isSearching,
@@ -1055,16 +1045,14 @@ private fun FakeWaveform(
 
 @Composable
 private fun HealthActivityCard(
-    stepState: StepCounterUiState,
     stepGoal: Int,
     healthSteps: Int?,
-    hasActivityRecognitionPermission: Boolean,
-    onEnableTrackingClick: () -> Unit,
+    onConnectHealthClick: () -> Unit,
     sleepHours: Double?,
     modifier: Modifier = Modifier
 ) {
-    // Telefon sensörü ve Health Connect aynı adımları sayar; toplamak yerine büyük olanı göster
-    val todaySteps = maxOf(stepState.todaySteps, healthSteps ?: 0)
+    // Bugünkü adım Health Connect'ten eşitlenen kayıttan gelir (telefon sensörü kullanılmaz)
+    val todaySteps = healthSteps ?: 0
     Card(
         modifier = modifier,
         shape = CardShape,
@@ -1107,19 +1095,17 @@ private fun HealthActivityCard(
                     drawStopIndicator = {}
                 )
                 Spacer(modifier = Modifier.height(4.dp))
-                when {
-                    healthSteps == null && !stepState.isSensorAvailable ->
-                        Text(stringResource(R.string.steps_no_sensor), color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.labelSmall)
-                    healthSteps == null && !hasActivityRecognitionPermission ->
-                        Text(
-                            stringResource(R.string.steps_enable_permission),
-                            style = MaterialTheme.typography.labelSmall,
-                            fontWeight = FontWeight.SemiBold,
-                            color = MimoPurple,
-                            modifier = Modifier.clickable(onClick = onEnableTrackingClick)
-                        )
-                    else ->
-                        Text(stringResource(R.string.goal_value, String.format(Locale.getDefault(), "%,d", stepGoal)), style = MaterialTheme.typography.labelSmall, color = CardMutedText)
+                if (healthSteps == null) {
+                    // Bugün için Health Connect'ten adım gelmedi (izin yok ya da henüz eşitlenmedi)
+                    Text(
+                        stringResource(R.string.steps_connect_health),
+                        style = MaterialTheme.typography.labelSmall,
+                        fontWeight = FontWeight.SemiBold,
+                        color = MimoPurple,
+                        modifier = Modifier.clickable(onClick = onConnectHealthClick)
+                    )
+                } else {
+                    Text(stringResource(R.string.goal_value, String.format(Locale.getDefault(), "%,d", stepGoal)), style = MaterialTheme.typography.labelSmall, color = CardMutedText)
                 }
             }
 

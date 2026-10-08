@@ -1,3 +1,9 @@
+/*
+ * AnalysisCharts: İstatistik sekmesinin en altındaki "Haftalık akış" kartı.
+ *
+ * Son 7 günün ruh hali (çizgi grafik) ve adım (çubuk grafik) değerleri Compose Canvas ile,
+ * kütüphanesiz çizilir. Bir güne dokununca o günün değerleri üstte gösterilir.
+ */
 package com.example.logio.ui.analysis
 
 import androidx.compose.foundation.BorderStroke

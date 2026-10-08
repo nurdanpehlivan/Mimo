@@ -1,5 +1,17 @@
+/*
+ * TimelineDialogs: "+" menüsünden açılan kayıt pencereleri.
+ *
+ * Not, ruh hali, su, konum (harita + arama), uyku, link, çizim, video, film/kitap/müzik arama vb.
+ * QuickActionDialogHost hangi pencerenin açık olduğuna göre doğru pencereyi gösterir.
+ * Pencereler kaydı kendileri yapmaz; onAdd... / onSave... parametreleriyle ekrana bildirir.
+ * Harcama, kahve ve alkol pencereleri TrackerDialogs.kt'dedir.
+ */
 package com.example.logio.ui.timeline
 
+import com.example.logio.data.search.BookInfo
+import com.example.logio.data.search.LocationSearchResult
+import com.example.logio.data.search.MusicTrack
+import com.example.logio.data.search.TvMazeShow
 import com.example.logio.ui.theme.logioFieldColors
 import android.Manifest
 import android.annotation.SuppressLint

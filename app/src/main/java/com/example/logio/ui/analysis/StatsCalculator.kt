@@ -1,3 +1,10 @@
+/*
+ * StatsCalculator: İstatistik hesapları.
+ *
+ * summarizeDays: kayıtları gün gün özetler (o günün uykusu, kahvesi, harcaması...).
+ * computePeriodStats: seçili dönemin (hafta/ay/yıl) ortalamalarını ve toplamlarını çıkarır.
+ * Compose'a ve Android'e bağımlı değildir; birim testleri StatsCalculatorTest.kt içindedir.
+ */
 package com.example.logio.ui.analysis
 
 import androidx.annotation.StringRes
@@ -12,8 +19,6 @@ import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
 import kotlin.math.ceil
-
-// İstatistik hesapları: yalnızca okunan kayıtlardan, Compose'a ya da Android'e bağımlı değil
 
 private const val MINI_BAR_COUNT = 7
 
@@ -57,17 +62,15 @@ internal data class PeriodStats(
 internal fun summarizeDays(
     entries: List<JournalEntryEntity>,
     zone: ZoneId,
-    today: LocalDate,
-    sensorStepsToday: Int
+    today: LocalDate
 ): Map<LocalDate, DaySummary> {
     val byDay = entries.groupBy { Instant.ofEpochMilli(it.createdAt).atZone(zone).toLocalDate() }
     val days = byDay.keys + today
     return days.associateWith { day ->
         val dayEntries = byDay[day].orEmpty()
         val moods = dayEntries.filter { it.entryType == EntryType.MOOD }.mapNotNull { it.moodRating }.filter { it in 1..5 }
-        // Aynı gün birden çok eşitleme olabilir; en yüksek değeri al (çift saymamak için)
-        val healthSteps = dayEntries.filter { it.entryType == EntryType.STEPS }.mapNotNull { parseStepCount(it.content) }.maxOrNull()
-        val steps = listOfNotNull(healthSteps, sensorStepsToday.takeIf { day == today && it > 0 }).maxOrNull()
+        // Adım Health Connect'ten gelir; aynı gün birden çok eşitleme olabilir, en yüksek değeri al (çift saymamak için)
+        val steps = dayEntries.filter { it.entryType == EntryType.STEPS }.mapNotNull { parseStepCount(it.content) }.maxOrNull()
         DaySummary(
             // Manuel + Health Connect aynı geceyi iki kez kaydedebilir; en uzun olanı al
             sleepHours = dayEntries.filter { it.entryType == EntryType.SLEEP }.mapNotNull { it.sleepHours }.filter { isPlausibleSleep(it) }.maxOrNull(),

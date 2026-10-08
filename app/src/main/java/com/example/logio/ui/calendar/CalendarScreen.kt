@@ -1,3 +1,10 @@
+/*
+ * CalendarScreen: Takvim sekmesinin arayüzü.
+ *
+ * Üstte ay takvimi (kayıt olan günlerde renkli noktalar), altta seçili günün kayıtları
+ * zaman çizgisi olarak gösterilir. Kartlar Günlük ekranındaki TimelineItemCard ile aynıdır.
+ * Veriler ve kart işlemleri CalendarViewModel'den gelir.
+ */
 package com.example.logio.ui.calendar
 
 import androidx.compose.animation.AnimatedContent
@@ -50,7 +57,7 @@ import com.example.logio.ui.theme.MimoNavyMuted
 import com.example.logio.ui.theme.MimoPurple
 import com.example.logio.ui.timeline.EntryDetailSheet
 import com.example.logio.ui.timeline.TimelineItemCard
-import com.example.logio.ui.timeline.TimelineViewModel
+import com.example.logio.util.EntryLauncher
 import com.example.logio.ui.timeline.entryLook
 import java.time.DayOfWeek
 import java.time.Instant
@@ -69,14 +76,17 @@ private const val MAX_DOTS_PER_DAY = 3
 
 @Composable
 fun CalendarScreen(
-    viewModel: TimelineViewModel = hiltViewModel(),
+    viewModel: CalendarViewModel = hiltViewModel(),
     onBack: (() -> Unit)? = null,
     bottomBar: @Composable () -> Unit = {}
 ) {
-    val entries by viewModel.entries.collectAsState()
+    // Gün -> o günün kayıtları (sabahtan akşama sıralı); gruplama ViewModel'de yapılır
+    val entriesByDay by viewModel.entriesByDay.collectAsState()
     val playingFilePath by viewModel.playingFilePath.collectAsState()
     val transcribingEntryIds by viewModel.transcribingEntryIds.collectAsState()
+    val message by viewModel.message.collectAsState()
     val context = LocalContext.current
+    val snackbarHostState = remember { SnackbarHostState() }
 
     val zone = remember { ZoneId.systemDefault() }
     val today = remember { LocalDate.now(zone) }
@@ -84,16 +94,22 @@ fun CalendarScreen(
     var selectedDate by remember { mutableStateOf(today) }
     var detailEntry by remember { mutableStateOf<JournalEntryEntity?>(null) }
 
-    // Gün -> o günün kayıtları (sabahtan akşama sıralı)
-    val entriesByDay = remember(entries) {
-        entries
-            .groupBy { Instant.ofEpochMilli(it.createdAt).atZone(zone).toLocalDate() }
-            .mapValues { (_, dayEntries) -> dayEntries.sortedBy { it.createdAt } }
-    }
     val selectedEntries = entriesByDay[selectedDate].orEmpty()
 
+    // Ses çalma / yazıya çevirme hatası alttan kısa uyarı olarak gösterilir
+    LaunchedEffect(message) {
+        message?.let {
+            snackbarHostState.showSnackbar(it)
+            viewModel.clearMessage()
+        }
+    }
+
     MimoBackground {
-        Scaffold(containerColor = Color.Transparent, bottomBar = bottomBar) { innerPadding ->
+        Scaffold(
+            containerColor = Color.Transparent,
+            bottomBar = bottomBar,
+            snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
+        ) { innerPadding ->
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
@@ -172,9 +188,9 @@ fun CalendarScreen(
                                 onTranscribeClick = { viewModel.transcribeVoiceEntry(entry) },
                                 onDelete = { viewModel.deleteEntry(entry) },
                                 onTodoToggle = { taskIndex -> viewModel.toggleTodoItem(entry, taskIndex) },
-                                onVideoClick = { viewModel.openVideo(context, entry) },
-                                onLinkClick = { viewModel.openLink(context, entry) },
-                                onLocationClick = { viewModel.openMap(context, entry) },
+                                onVideoClick = { EntryLauncher.openVideo(context, entry) },
+                                onLinkClick = { EntryLauncher.openLink(context, entry) },
+                                onLocationClick = { EntryLauncher.openMap(context, entry) },
                                 onCardClick = { detailEntry = entry }
                             )
                         }

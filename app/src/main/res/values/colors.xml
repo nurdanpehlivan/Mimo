@@ -1,11 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="purple_200">#FFB7A9FF</color>
-    <color name="purple_500">#FF7C6CFF</color>
-    <color name="purple_700">#FF1B2150</color>
-    <color name="teal_200">#FF7ED9C3</color>
-    <color name="teal_700">#FF5BB8A4</color>
-    <color name="black">#FF1B2150</color>
-    <color name="white">#FFFFFFFF</color>
     <color name="mimo_cream">#FFFFF6F0</color>
 </resources>

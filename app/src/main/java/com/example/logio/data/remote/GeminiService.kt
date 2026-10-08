@@ -1,11 +1,23 @@
+/*
+ * GeminiService: Yapay zeka işleri (yemek fotoğrafından kalori analizi, sesli notu yazıya çevirme).
+ *
+ * İstekler Firebase AI Logic üzerinden Gemini'ye gider: API anahtarı uygulamanın içinde DURMAZ,
+ * Firebase projesinde saklanır. Firebase App Check (LogioApp → installAppCheck) her isteğe
+ * "bu istek gerçekten Logio'dan geliyor" kanıtı ekler; Play Store sürümünde bu kanıt Play Integrity'dir.
+ * Bir model yoğunsa ya da bulunamazsa listedeki bir sonraki model denenir.
+ */
 package com.example.logio.data.remote
 
 import android.graphics.Bitmap
 import android.util.Log
-import com.example.logio.BuildConfig
-import com.google.ai.client.generativeai.GenerativeModel
-import com.google.ai.client.generativeai.type.content
-import com.google.ai.client.generativeai.type.generationConfig
+import com.google.firebase.Firebase
+import com.google.firebase.ai.GenerativeModel
+import com.google.firebase.ai.ai
+import com.google.firebase.ai.type.GenerationConfig
+import com.google.firebase.ai.type.GenerativeBackend
+import com.google.firebase.ai.type.QuotaExceededException
+import com.google.firebase.ai.type.content
+import com.google.firebase.ai.type.generationConfig
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -34,8 +46,6 @@ class GeminiService @Inject constructor() {
         private const val MAX_IMAGE_DIMENSION = 800
     }
 
-    private val apiKey = BuildConfig.GEMINI_API_KEY
-
     private val candidateModels = listOf(
         "gemini-3.5-flash-lite",
         "gemini-3.5-flash",
@@ -43,6 +53,10 @@ class GeminiService @Inject constructor() {
         "gemini-3.7-flash",
         "gemini-3.8-flash"
     )
+
+    // Gemini Developer API (Firebase konsolunda AI Logic → "Gemini Developer API" seçili olmalı)
+    private fun model(name: String, config: GenerationConfig? = null): GenerativeModel =
+        Firebase.ai(backend = GenerativeBackend.googleAI()).generativeModel(modelName = name, generationConfig = config)
 
     suspend fun analyzeMealImage(bitmap: Bitmap): MealAnalysisResult? = withContext(Dispatchers.IO) {
         val scaledBitmap = scaleBitmapIfNeeded(bitmap, MAX_IMAGE_DIMENSION)
@@ -66,20 +80,13 @@ class GeminiService @Inject constructor() {
             try {
                 Log.d(TAG, "Yemek analizi deneniyor (Model: $modelName)...")
 
-                val model = GenerativeModel(
-                    modelName = modelName,
-                    apiKey = apiKey,
-                    generationConfig = generationConfig {
-                        responseMimeType = "application/json"
-                    }
-                )
-
-                val response = model.generateContent(
-                    content {
-                        image(scaledBitmap)
-                        text(prompt)
-                    }
-                )
+                val response = model(modelName, generationConfig { responseMimeType = "application/json" })
+                    .generateContent(
+                        content {
+                            image(scaledBitmap)
+                            text(prompt)
+                        }
+                    )
 
                 val rawText = response.text?.trim()
                 Log.d(TAG, "Gemini ($modelName) cevabı: $rawText")
@@ -93,20 +100,7 @@ class GeminiService @Inject constructor() {
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {
-                val msg = e.message ?: ""
-                Log.w(TAG, "Hata ($modelName): $msg")
-
-                if (isQuotaExhausted(e)) {
-                    throw GeminiQuotaException("Günlük ücretsiz limit doldu")
-                }
-
-                if (msg.contains("503") || msg.contains("UNAVAILABLE") || msg.contains("high demand")) {
-                    delay(3000L)
-                }
-
-                if (msg.contains("404") || msg.contains("NOT_FOUND")) {
-                    Log.w(TAG, "$modelName bulunamadı, sonraki modele geçiliyor.")
-                }
+                handleModelError(modelName, e)
             }
         }
 
@@ -145,14 +139,9 @@ class GeminiService @Inject constructor() {
             try {
                 Log.d(TAG, "STT deneniyor (Model: $modelName)...")
 
-                val model = GenerativeModel(
-                    modelName = modelName,
-                    apiKey = apiKey
-                )
-
-                val response = model.generateContent(
+                val response = model(modelName).generateContent(
                     content {
-                        blob("audio/mp4", audioBytes)
+                        inlineData(audioBytes, "audio/mp4")
                         text(prompt)
                     }
                 )
@@ -164,23 +153,34 @@ class GeminiService @Inject constructor() {
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {
-                val msg = e.message ?: ""
-                Log.w(TAG, "STT hatası ($modelName): $msg")
-
-                if (isQuotaExhausted(e)) {
-                    throw GeminiQuotaException("Günlük ücretsiz limit doldu")
-                }
-
-                if (msg.contains("503") || msg.contains("UNAVAILABLE") || msg.contains("high demand")) {
-                    delay(3000L)
-                }
+                handleModelError(modelName, e)
             }
         }
 
         null
     }
 
+    /**
+     * Bir modelin hatasını değerlendirir: kota dolduysa kullanıcıya söylenmek üzere GeminiQuotaException fırlatır,
+     * model yoğunsa kısa bir süre bekler; diğer durumlarda bir sonraki model denenir.
+     */
+    private suspend fun handleModelError(modelName: String, e: Exception) {
+        val msg = e.message ?: ""
+        Log.w(TAG, "Hata ($modelName): $msg")
+
+        if (isQuotaExhausted(e)) {
+            throw GeminiQuotaException("Günlük ücretsiz limit doldu")
+        }
+        if (msg.contains("503") || msg.contains("UNAVAILABLE") || msg.contains("high demand")) {
+            delay(3000L)
+        }
+        if (msg.contains("404") || msg.contains("NOT_FOUND")) {
+            Log.w(TAG, "$modelName bulunamadı, sonraki modele geçiliyor.")
+        }
+    }
+
     private fun isQuotaExhausted(e: Exception): Boolean {
+        if (e is QuotaExceededException) return true
         val m = e.message?.lowercase() ?: return false
         return m.contains("quota exceeded") || m.contains("daily limit") || m.contains("per_day")
     }

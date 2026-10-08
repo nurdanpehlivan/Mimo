@@ -1,3 +1,9 @@
+/*
+ * AnalysisScreen: İstatistik sekmesinin sayfa düzeni.
+ *
+ * Kartları alt alta dizer: başlık, dönem seçici, uyku/ruh hali/adım/beslenme/kahve/alkol kartları,
+ * harcama kartı ve haftalık akış grafiği. Hesap yapmaz; hazır sonucu AnalysisViewModel'den alır.
+ */
 package com.example.logio.ui.analysis
 
 import androidx.compose.foundation.layout.*

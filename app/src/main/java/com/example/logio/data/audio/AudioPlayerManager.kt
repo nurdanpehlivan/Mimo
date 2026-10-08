@@ -1,3 +1,9 @@
+/*
+ * AudioPlayerManager: Sesli notları çalan sınıf (MediaPlayer sarmalayıcısı).
+ *
+ * Tek örnek (Singleton) olduğu için aynı anda yalnızca bir ses çalar ve
+ * "şu an hangi dosya çalıyor" bilgisi (playingFilePath) tüm ekranlarda aynıdır.
+ */
 package com.example.logio.data.audio
 
 import android.content.Context
@@ -50,6 +56,11 @@ class AudioPlayerManager @Inject constructor(
             onError(AppLocale.wrap(context).getString(R.string.err_audio_play))
             false
         }
+    }
+
+    /** Bu dosya çalıyorsa durdurur, çalmıyorsa başlatır (kartlardaki oynat/durdur düğmesi). */
+    fun toggle(filePath: String, onError: (String) -> Unit) {
+        if (_playingFilePath.value == filePath) stop() else play(filePath, onError = onError)
     }
 
     fun stop() {

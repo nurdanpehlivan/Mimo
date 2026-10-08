@@ -274,10 +274,8 @@
     <string name="dlg_sleep_range">Enter between 0 and %d hours (e.g. 7.5)</string>
     <string name="dlg_sleep_example">e.g. 7.5</string>
     <string name="dlg_add_expense">Add Expense</string>
-    <string name="dlg_description">Description</string>
     <string name="dlg_amount_currency">Amount (₺)</string>
     <string name="dlg_coffee">Coffee Time</string>
-    <string name="dlg_which_cup">Which cup is this today?</string>
     <string name="dlg_cup_count">Number of cups</string>
     <string name="dlg_alcohol">Alcohol Intake</string>
     <string name="dlg_amount">Amount</string>
@@ -320,8 +318,7 @@
     <string name="voice_not_transcribed">Not transcribed yet.</string>
     <string name="voice_transcribing">Transcribing...</string>
     <string name="voice_transcribe">Transcribe</string>
-    <string name="steps_no_sensor">No sensor</string>
-    <string name="steps_enable_permission">Allow access</string>
+    <string name="steps_connect_health">Get from Health Connect</string>
     <string name="goal_value">Goal %s</string>
     <string name="sleep_no_record">No record</string>
     <string name="sleep_too_little">Too little</string>

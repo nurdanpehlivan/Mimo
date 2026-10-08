@@ -1,3 +1,9 @@
+/*
+ * TimelineUtils: Kayıtlarla ilgili küçük yardımcı fonksiyonlar.
+ *
+ * Aynı gün mü kontrolü, uyku değerinin makul olup olmadığı (en fazla 16 saat), adım metninden
+ * sayıyı okuma, günlük su toplamı, kart başlığı/içeriği ve harcama tutarı biçimlendirme.
+ */
 package com.example.logio.ui.timeline
 
 import androidx.compose.runtime.Composable
@@ -5,7 +11,6 @@ import androidx.compose.ui.res.stringResource
 import com.example.logio.R
 import com.example.logio.data.local.EntryType
 import com.example.logio.data.local.JournalEntryEntity
-import java.text.SimpleDateFormat
 import java.util.*
 
 fun isSameCalendarDay(timeMillisA: Long, timeMillisB: Long): Boolean {
@@ -15,10 +20,6 @@ fun isSameCalendarDay(timeMillisA: Long, timeMillisB: Long): Boolean {
             calA.get(Calendar.DAY_OF_YEAR) == calB.get(Calendar.DAY_OF_YEAR)
 }
 
-fun formatTodayLabel(): String {
-    val now = Calendar.getInstance().time
-    return SimpleDateFormat("dd MMMM yyyy", Locale.getDefault()).format(now)
-}
 
 // Bir gecelik makul uyku üst sınırı; üstündeki değerler (örn. 8,5 yerine yazılan 85) yok sayılır
 const val MAX_SLEEP_HOURS = 16.0
