@@ -1,6 +1,8 @@
 package com.example.logio.data.audio
 
 import android.content.Context
+import com.example.logio.R
+import com.example.logio.util.AppLocale
 import android.media.MediaRecorder
 import android.os.Build
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -47,7 +49,7 @@ class AudioRecorderManager @Inject constructor(
             onSuccess()
         } catch (e: Exception) {
             _isRecording.value = false
-            onError(e.localizedMessage ?: "Ses kaydi baslatilamadi")
+            onError(AppLocale.wrap(context).getString(R.string.err_audio_record))
         }
     }
 

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+    <!-- Zaman tüneli karşılama kartı -->
+    <drawable name="mascot_main">@drawable/ic_mascot_main</drawable>
+    <!-- Profil fotoğrafı yerine -->
+    <drawable name="mascot_profile">@drawable/ic_mascot_profile</drawable>
+    <!-- İstatistik başlığındaki tebrik kartı -->
+    <drawable name="mascot_stats">@drawable/ic_mascot_stats</drawable>
+    <!-- Boş durumlar: hiç kayıt yok, takvimde boş gün, geçmişten anı yok -->
+    <drawable name="mascot_empty">@drawable/ic_mascot_empty</drawable>
+    <!-- Aramada sonuç çıkmadığında -->
+    <drawable name="mascot_search_empty">@drawable/ic_mascot_search_empty</drawable>
+    <!-- Su kartı ve su penceresi -->
+    <drawable name="mascot_water">@drawable/ic_mascot_water</drawable>
+    <!-- Kahve penceresi ve istatistik kartı -->
+    <drawable name="mascot_coffee">@drawable/ic_mascot_coffee_custom</drawable>
+    <!-- Alkol penceresi ve istatistik kartı -->
+    <drawable name="mascot_alcohol">@drawable/ic_mascot_alcohol</drawable>
+    <!-- Harcama penceresi ve istatistik kartı -->
+    <drawable name="mascot_money">@drawable/ic_mascot_money</drawable>
+    <!-- Yolculuk videosu sayfası -->
+    <drawable name="mascot_journey">@drawable/ic_mascot_journey</drawable>
+    <drawable name="mascot_location">@drawable/ic_mascot_location</drawable>
+    <!-- Rozet kazanıldığında -->
+    <drawable name="mascot_celebrate">@drawable/ic_mascot_celebrate</drawable>
+    <!-- Uygulama kilidi ekranı -->
+    <drawable name="mascot_lock">@drawable/ic_mascot_main</drawable>
+    <drawable name="mascot_eating">@drawable/ic_mascot_eating</drawable>
+</resources>

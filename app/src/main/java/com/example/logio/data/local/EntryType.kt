@@ -19,5 +19,6 @@ enum class EntryType {
     ALCOHOL,    // Alkol tüketimi
     VIDEO,      // Video anısı
     STEPS,      // Adım kaydı
-    LINK        // Bağlantı/Link kaydı
+    LINK,        // Bağlantı/Link kaydı
+    JOURNEY_VIDEO,
 }

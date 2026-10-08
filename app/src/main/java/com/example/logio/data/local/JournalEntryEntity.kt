@@ -21,6 +21,7 @@ data class JournalEntryEntity(
 
     val imagePaths: String? = null, // Virgülle ayrılmış çoklu resim yolları
     val audioPath: String? = null,
+    val transcriptionText: String? = null, // Görev 1: STT için eklenen alan
 
     val calories: Int? = null,
     val protein: Double? = null,

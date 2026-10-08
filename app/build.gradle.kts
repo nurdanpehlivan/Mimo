@@ -23,7 +23,7 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
-        // local.properties dosyasından MAPS_API_KEY değerini güvenli bir şekilde okuyoruz
+        // local.properties dosyasından anahtarları güvenli şekilde okuyoruz
         val secretsProperties = Properties()
         val localPropertiesFile = project.rootProject.file("local.properties")
         if (localPropertiesFile.exists()) {
@@ -31,8 +31,14 @@ android {
                 secretsProperties.load(stream)
             }
         }
+
+        // Maps API Key (Manifest için)
         val mapsApiKey = secretsProperties.getProperty("MAPS_API_KEY") ?: "YOUR_FALLBACK_KEY"
         manifestPlaceholders["MAPS_API_KEY"] = mapsApiKey
+
+        // Gemini API Key (BuildConfig için)
+        val geminiApiKey = secretsProperties.getProperty("GEMINI_API_KEY") ?: ""
+        buildConfigField("String", "GEMINI_API_KEY", "\"$geminiApiKey\"")
     }
 
     buildTypes {
@@ -56,6 +62,7 @@ android {
     buildFeatures {
         compose = true
         viewBinding = true
+        buildConfig = true
     }
 }
 
@@ -69,7 +76,10 @@ dependencies {
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
     implementation("androidx.compose.material:material-icons-extended")
-    
+
+    // Biometric Auth
+    implementation("androidx.biometric:biometric:1.2.0-alpha05")
+
     // UI Support
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.constraintlayout)
@@ -95,8 +105,22 @@ dependencies {
     implementation(libs.play.services.maps)
     implementation("com.google.android.gms:play-services-location:21.3.0")
 
-    implementation(platform("com.google.firebase:firebase-bom:33.4.0"))
-    implementation("com.google.firebase:firebase-vertexai:16.0.2")
+    implementation(platform("com.google.firebase:firebase-bom:34.19.0"))
+    implementation("com.google.firebase:firebase-appcheck-debug")
+
+    // Media3 Transformer
+    implementation("androidx.media3:media3-transformer:1.3.1")
+    implementation("androidx.media3:media3-effect:1.3.1")
+    implementation("androidx.media3:media3-common:1.3.1")
+
+    // Health Connect
+    implementation("androidx.health.connect:connect-client:1.1.0-alpha11")
+
+    // Google AI Client SDK & Ktor Runtime
+    implementation("com.google.ai.client.generativeai:generativeai:0.9.0")
+    val ktorVersion = "2.3.12"
+    implementation("io.ktor:ktor-client-core:$ktorVersion")
+    implementation("io.ktor:ktor-client-okhttp:$ktorVersion")
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

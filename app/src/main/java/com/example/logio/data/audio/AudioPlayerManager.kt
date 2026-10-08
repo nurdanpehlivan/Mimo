@@ -1,6 +1,8 @@
 package com.example.logio.data.audio
 
 import android.content.Context
+import com.example.logio.R
+import com.example.logio.util.AppLocale
 import android.media.MediaPlayer
 import androidx.core.net.toUri
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -27,7 +29,7 @@ class AudioPlayerManager @Inject constructor(
         stop()
         val file = File(filePath)
         if (!file.exists()) {
-            onError("Ses dosyasi bulunamadi.")
+            onError(AppLocale.wrap(context).getString(R.string.err_audio_not_found))
             return false
         }
 
@@ -45,7 +47,7 @@ class AudioPlayerManager @Inject constructor(
             true
         } catch (e: Exception) {
             stop()
-            onError(e.localizedMessage ?: "Ses oynatilamadi.")
+            onError(AppLocale.wrap(context).getString(R.string.err_audio_play))
             false
         }
     }

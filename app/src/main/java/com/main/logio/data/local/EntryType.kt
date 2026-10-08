@@ -1,2 +1,0 @@
-// THIS FILE IS MOVED TO com.example.logio.data.local
-// EMPTY TO PREVENT REDECLARATION ERROR
