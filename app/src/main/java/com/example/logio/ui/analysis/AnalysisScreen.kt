@@ -79,10 +79,10 @@ fun AnalysisScreen(
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     CoffeeMetricCard(stats, Modifier.weight(1f).fillMaxHeight())
-                    AlcoholMetricCard(stats, current.period, Modifier.weight(1f).fillMaxHeight())
+                    AlcoholMetricCard(stats, Modifier.weight(1f).fillMaxHeight())
                 }
                 Spacer(modifier = Modifier.height(12.dp))
-                ExpenseCard(stats, current.period)
+                ExpenseCard(stats)
 
                 Spacer(modifier = Modifier.height(20.dp))
                 WeeklyFlowCard(days = current.lastSevenDays, summaries = current.summaries, today = current.today, stepGoal = profile.stepGoal)

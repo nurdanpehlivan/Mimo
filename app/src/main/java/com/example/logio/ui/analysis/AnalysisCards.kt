@@ -432,7 +432,7 @@ internal fun CoffeeMetricCard(stats: PeriodStats, modifier: Modifier) {
 }
 
 @Composable
-internal fun AlcoholMetricCard(stats: PeriodStats, period: StatsPeriod, modifier: Modifier) {
+internal fun AlcoholMetricCard(stats: PeriodStats, modifier: Modifier) {
     val tint = Color(0xFFC2410C)
     MetricCard(
         title = stringResource(R.string.action_alcohol),
@@ -451,9 +451,9 @@ internal fun AlcoholMetricCard(stats: PeriodStats, period: StatsPeriod, modifier
         )
         Spacer(modifier = Modifier.height(6.dp))
         // Alkolsüz gün sayısı olumlu bir hedef gibi gösterilir
-        val freeDays = (period.days - stats.alcoholDays).coerceAtLeast(0)
+        val freeDays = (stats.trackedDays - stats.alcoholDays).coerceAtLeast(0)
         Text(
-            text = stringResource(R.string.stats_alcohol_free_days, freeDays, period.days),
+            text = stringResource(R.string.stats_alcohol_free_days, freeDays, stats.trackedDays),
             style = MaterialTheme.typography.labelSmall,
             color = InkSecondary
         )
@@ -461,7 +461,7 @@ internal fun AlcoholMetricCard(stats: PeriodStats, period: StatsPeriod, modifier
 }
 
 @Composable
-internal fun ExpenseCard(stats: PeriodStats, period: StatsPeriod) {
+internal fun ExpenseCard(stats: PeriodStats) {
     val money = remember { java.text.NumberFormat.getNumberInstance(TrLocale).apply { maximumFractionDigits = 0 } }
     fun lira(value: Double) = "₺${money.format(value)}"
 
@@ -490,7 +490,7 @@ internal fun ExpenseCard(stats: PeriodStats, period: StatsPeriod) {
                     Spacer(modifier = Modifier.height(10.dp))
                     Text(lira(stats.expenseTotal), style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold, color = InkPrimary)
                     Text(
-                        text = stringResource(R.string.stats_expense_daily, lira(stats.expenseTotal / period.days)),
+                        text = stringResource(R.string.stats_expense_daily, lira(stats.expenseDailyAverage)),
                         style = MaterialTheme.typography.labelMedium,
                         color = InkMuted
                     )

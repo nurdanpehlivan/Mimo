@@ -11,6 +11,7 @@ import com.example.logio.data.local.JournalEntryEntity
 import com.example.logio.ui.timeline.ExpenseCategory
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.time.LocalDate
 import java.time.ZoneId
@@ -138,6 +139,59 @@ class StatsCalculatorTest {
         )
         assertEquals(3.0, stats.alcoholTotal, 0.001)
         assertEquals(2, stats.alcoholDays)
+    }
+
+    @Test
+    fun `her donemde mini grafik 7 dilimdir ve hicbir gun kaybolmaz`() {
+        listOf(StatsPeriod.WEEK, StatsPeriod.MONTH, StatsPeriod.YEAR).forEach { period ->
+            val days = (1..period.days).toList()
+            val parts = days.splitEvenly(7)
+            assertEquals("${period.name}: dilim sayısı", 7, parts.size)
+            assertEquals("${period.name}: günler sırasıyla ve eksiksiz", days, parts.flatten())
+            assertTrue("${period.name}: dilimler dengeli", parts.maxOf { it.size } - parts.minOf { it.size } <= 1)
+        }
+        val stats = computePeriodStats(emptyList(), summarize(emptyList()), StatsPeriod.MONTH, today, zone)
+        assertEquals(7, stats.sleepBuckets.size)
+        assertEquals(7, stats.coffeeBuckets.size)
+    }
+
+    @Test
+    fun `kahve harcama ve alkolsuz gun takip edilen gune bolunur`() {
+        // Uygulama 3 gündür kullanılıyor; "Yıl" görünümünde bile 3 güne bölünmeli
+        val entries = listOf(
+            entry(EntryType.TEXT, today.minusDays(2)),
+            entry(EntryType.COFFEE, today).copy(coffeeCups = 3),
+            entry(EntryType.COFFEE, today.minusDays(1)).copy(coffeeCups = 3),
+            entry(EntryType.EXPENSE, today).copy(expenseAmount = 300.0, expenseCategory = "food"),
+            entry(EntryType.ALCOHOL, today).copy(alcoholUnits = "1")
+        )
+        val stats = computePeriodStats(entries, summarize(entries), StatsPeriod.YEAR, today, zone)
+        assertEquals(3, stats.trackedDays)
+        assertEquals("6 fincan / 3 gün", 2.0, stats.coffeeAverage!!, 0.001)
+        assertEquals("300 TL / 3 gün", 100.0, stats.expenseDailyAverage, 0.001)
+        assertEquals("3 günün 1'inde alkol", 1, stats.alcoholDays)
+    }
+
+    @Test
+    fun `ilk kayit donemden onceyse donemin tum gunleri sayilir`() {
+        val entries = listOf(
+            entry(EntryType.TEXT, today.minusDays(100)),
+            entry(EntryType.COFFEE, today).copy(coffeeCups = 7)
+        )
+        val stats = weekStats(entries)
+        assertEquals(7, stats.trackedDays)
+        assertEquals(1.0, stats.coffeeAverage!!, 0.001)
+    }
+
+    @Test
+    fun `otomatik adim kayitlari ani sayisina girmez`() {
+        val stats = weekStats(
+            listOf(
+                entry(EntryType.TEXT, today),
+                entry(EntryType.STEPS, today).copy(content = "5000")
+            )
+        )
+        assertEquals(1, stats.entryCount)
     }
 
     @Test
