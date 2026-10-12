@@ -13,7 +13,9 @@ android {
     compileSdk = 37
 
     defaultConfig {
-        applicationId = "com.example.logio"
+        // Play Store'daki kalıcı kimlik; yayınlandıktan sonra değiştirilemez.
+        // Koddaki paket adı (namespace = com.example.logio) ayrı bir şeydir ve kullanıcıya görünmez.
+        applicationId = "com.nurdanpehlivan.logio"
         minSdk = 26
         targetSdk = 36
         versionCode = 9
