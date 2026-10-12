@@ -113,6 +113,8 @@ dependencies {
     implementation("androidx.health.connect:connect-client:1.1.0")
 
     testImplementation(libs.junit)
+    // Android'in org.json'u telefonsuz testlerde yok; yedek biçimi testleri gerçek uygulamasını kullanır
+    testImplementation("org.json:json:20260814")
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 }

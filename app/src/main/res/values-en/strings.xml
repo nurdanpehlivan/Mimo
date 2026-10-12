@@ -425,4 +425,23 @@
     <string name="lock_prompt_enable">Verify to turn on app lock</string>
     <string name="lock_prompt_disable">Verify to turn off app lock</string>
     <string name="lock_unavailable">Set up a screen lock (PIN, pattern or fingerprint) in your phone settings first.</string>
+
+    <!-- Yedekleme (dışa / içe aktar) -->
+    <string name="settings_backup_export">Export backup</string>
+    <string name="settings_backup_export_desc">All entries, photos and audio in one encrypted file</string>
+    <string name="settings_backup_import">Restore from backup</string>
+    <string name="settings_backup_import_desc">Bring entries from another phone or an older version</string>
+    <string name="backup_password_title_export">Set a backup password</string>
+    <string name="backup_password_title_import">Enter the backup password</string>
+    <string name="backup_password">Password</string>
+    <string name="backup_password_confirm">Confirm password</string>
+    <string name="backup_password_hint">If you forget this password the backup can’t be opened. At least 6 characters.</string>
+    <string name="backup_password_mismatch">Passwords don’t match</string>
+    <string name="backup_password_short">Password must be at least 6 characters</string>
+    <string name="backup_continue">Continue</string>
+    <string name="backup_working">Working on backup…</string>
+    <string name="backup_export_done">Backup saved · Entries: %1$d</string>
+    <string name="backup_import_done">Restored · New: %1$d, already present: %2$d</string>
+    <string name="backup_error_password">Wrong password or not a Logio backup</string>
+    <string name="backup_error">Backup operation failed</string>
 </resources>

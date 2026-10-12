@@ -2,7 +2,7 @@
  * ProfileScreen: Profil sekmesinin arayüzü.
  *
  * Başlık kartı (isim, seri), istatistik ızgarası, rozetler, en çok kullanılan türler,
- * "Geçmişten bir anı" kartı ve ayarlar (dil, uygulama kilidi) burada çizilir.
+ * "Geçmişten bir anı" kartı ve ayarlar (dil, uygulama kilidi, yedeği dışa / içe aktarma) burada çizilir.
  * Hesaplar ProfileViewModel'de (ProfileStats.kt) yapılır; bu dosya yalnızca gösterir.
  */
 package com.example.logio.ui.profile
@@ -56,6 +56,14 @@ import com.example.logio.util.AppLock
 import androidx.fragment.app.FragmentActivity
 import android.widget.Toast
 import androidx.compose.material.icons.rounded.Lock
+import androidx.compose.material.icons.rounded.Download
+import androidx.compose.material.icons.rounded.Upload
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import android.net.Uri
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import com.example.logio.util.AppLocale
@@ -117,8 +125,37 @@ fun ProfileScreen(
     var showLanguageDialog by remember { mutableStateOf(false) }
     var lockEnabled by remember { mutableStateOf(AppLock.isEnabled(context)) }
 
+    // Yedekleme: önce dosya seçilir (nereye kaydedilecek / hangisi yüklenecek), sonra şifre sorulur
+    val backupStatus by viewModel.backupStatus.collectAsState()
+    var exportTarget by remember { mutableStateOf<Uri?>(null) }
+    var importSource by remember { mutableStateOf<Uri?>(null) }
+    val exportLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.CreateDocument("application/octet-stream")
+    ) { uri -> exportTarget = uri }
+    val importLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.OpenDocument()
+    ) { uri -> importSource = uri }
+    val snackbarHostState = remember { SnackbarHostState() }
+    val backupMessage = when (val status = backupStatus) {
+        is BackupStatus.Exported -> stringResource(R.string.backup_export_done, status.entryCount)
+        is BackupStatus.Imported -> stringResource(R.string.backup_import_done, status.added, status.skipped)
+        BackupStatus.WrongPassword -> stringResource(R.string.backup_error_password)
+        BackupStatus.Failed -> stringResource(R.string.backup_error)
+        BackupStatus.Idle, BackupStatus.Working -> null
+    }
+    LaunchedEffect(backupMessage) {
+        if (backupMessage != null) {
+            viewModel.clearBackupStatus()
+            snackbarHostState.showSnackbar(backupMessage, withDismissAction = true)
+        }
+    }
+
     MimoBackground {
-        Scaffold(containerColor = Color.Transparent, bottomBar = bottomBar) { innerPadding ->
+        Scaffold(
+            containerColor = Color.Transparent,
+            bottomBar = bottomBar,
+            snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
+        ) { innerPadding ->
             // İlk hesap arka planda sürerken yalnızca alt menü görünür
             val summary = profileSummary ?: return@Scaffold
             Column(
@@ -193,6 +230,20 @@ fun ProfileScreen(
                         )
                     }
                 )
+                Spacer(modifier = Modifier.height(10.dp))
+                SettingsActionRow(
+                    icon = Icons.Rounded.Upload,
+                    title = stringResource(R.string.settings_backup_export),
+                    description = stringResource(R.string.settings_backup_export_desc),
+                    onClick = { exportLauncher.launch("logio-yedek-$today.logio") }
+                )
+                Spacer(modifier = Modifier.height(10.dp))
+                SettingsActionRow(
+                    icon = Icons.Rounded.Download,
+                    title = stringResource(R.string.settings_backup_import),
+                    description = stringResource(R.string.settings_backup_import_desc),
+                    onClick = { importLauncher.launch(arrayOf("*/*")) }
+                )
 
                 Spacer(modifier = Modifier.height(24.dp))
                 Text(
@@ -239,6 +290,32 @@ fun ProfileScreen(
             },
             onTodoToggle = { taskIndex -> viewModel.toggleTodoItem(entry, taskIndex) }
         )
+    }
+
+    exportTarget?.let { target ->
+        BackupPasswordDialog(
+            isExport = true,
+            onDismiss = { exportTarget = null },
+            onConfirm = { password ->
+                exportTarget = null
+                viewModel.exportBackup(target, password)
+            }
+        )
+    }
+
+    importSource?.let { source ->
+        BackupPasswordDialog(
+            isExport = false,
+            onDismiss = { importSource = null },
+            onConfirm = { password ->
+                importSource = null
+                viewModel.importBackup(source, password)
+            }
+        )
+    }
+
+    if (backupStatus == BackupStatus.Working) {
+        BackupWorkingDialog()
     }
 }
 
@@ -868,3 +945,119 @@ private fun AppLockRow(enabled: Boolean, onToggle: (Boolean) -> Unit) {
         }
     }
 }
+
+// ---------- Yedekleme ----------
+
+/** Ayarlardaki dokunulabilir satır (simge, başlık, açıklama, ok). */
+@Composable
+private fun SettingsActionRow(icon: ImageVector, title: String, description: String, onClick: () -> Unit) {
+    WhiteCard(modifier = Modifier.clickable(onClick = onClick)) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier
+                    .size(32.dp)
+                    .clip(RoundedCornerShape(10.dp))
+                    .background(MimoCloud)
+            ) {
+                Icon(icon, contentDescription = null, tint = MimoPurple, modifier = Modifier.size(18.dp))
+            }
+            Spacer(modifier = Modifier.width(10.dp))
+            Column(modifier = Modifier.weight(1f)) {
+                Text(title, style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.SemiBold, color = InkPrimary)
+                Text(description, style = MaterialTheme.typography.labelSmall, color = InkSecondary)
+            }
+            Icon(Icons.Rounded.ChevronRight, contentDescription = null, tint = InkMuted)
+        }
+    }
+}
+
+/**
+ * Yedek şifresi penceresi. Dışa aktarırken şifre iki kez istenir (yanlış yazılırsa yedek açılamaz),
+ * içe aktarırken bir kez. Şifre ViewModel'e karakter dizisi olarak verilir ve işlem bitince silinir.
+ */
+@Composable
+private fun BackupPasswordDialog(isExport: Boolean, onDismiss: () -> Unit, onConfirm: (CharArray) -> Unit) {
+    var password by remember { mutableStateOf("") }
+    var confirm by remember { mutableStateOf("") }
+    val tooShort = password.length < MIN_BACKUP_PASSWORD
+    val mismatch = isExport && confirm.isNotEmpty() && confirm != password
+    val canContinue = !tooShort && (!isExport || confirm == password)
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        containerColor = Color.White,
+        title = {
+            Text(
+                stringResource(if (isExport) R.string.backup_password_title_export else R.string.backup_password_title_import),
+                fontWeight = FontWeight.Bold,
+                color = InkPrimary
+            )
+        },
+        text = {
+            Column {
+                if (isExport) {
+                    Text(stringResource(R.string.backup_password_hint), style = MaterialTheme.typography.bodySmall, color = InkSecondary)
+                    Spacer(modifier = Modifier.height(12.dp))
+                }
+                OutlinedTextField(
+                    colors = logioFieldColors(),
+                    value = password,
+                    onValueChange = { password = it },
+                    label = { Text(stringResource(R.string.backup_password)) },
+                    singleLine = true,
+                    visualTransformation = PasswordVisualTransformation(),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password, imeAction = if (isExport) ImeAction.Next else ImeAction.Done),
+                    supportingText = if (isExport && password.isNotEmpty() && tooShort) {
+                        { Text(stringResource(R.string.backup_password_short)) }
+                    } else null,
+                    modifier = Modifier.fillMaxWidth()
+                )
+                if (isExport) {
+                    Spacer(modifier = Modifier.height(8.dp))
+                    OutlinedTextField(
+                        colors = logioFieldColors(),
+                        value = confirm,
+                        onValueChange = { confirm = it },
+                        label = { Text(stringResource(R.string.backup_password_confirm)) },
+                        singleLine = true,
+                        isError = mismatch,
+                        visualTransformation = PasswordVisualTransformation(),
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password, imeAction = ImeAction.Done),
+                        supportingText = if (mismatch) {
+                            { Text(stringResource(R.string.backup_password_mismatch)) }
+                        } else null,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = { onConfirm(password.toCharArray()) }, enabled = canContinue) {
+                Text(stringResource(R.string.backup_continue), color = if (canContinue) MimoPurple else InkMuted, fontWeight = FontWeight.Bold)
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) { Text(stringResource(R.string.cancel), color = InkSecondary) }
+        }
+    )
+}
+
+/** Yedek hazırlanırken / geri yüklenirken gösterilen, kapatılamayan bekleme penceresi. */
+@Composable
+private fun BackupWorkingDialog() {
+    AlertDialog(
+        onDismissRequest = {},
+        containerColor = Color.White,
+        confirmButton = {},
+        text = {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                CircularProgressIndicator(color = MimoPurple, modifier = Modifier.size(28.dp))
+                Spacer(modifier = Modifier.width(16.dp))
+                Text(stringResource(R.string.backup_working), style = MaterialTheme.typography.bodyLarge, color = InkPrimary)
+            }
+        }
+    )
+}
+
+private const val MIN_BACKUP_PASSWORD = 6

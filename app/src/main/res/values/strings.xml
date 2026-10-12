@@ -439,4 +439,23 @@
     <string name="lock_prompt_enable">Uygulama kilidini açmak için doğrula</string>
     <string name="lock_prompt_disable">Uygulama kilidini kapatmak için doğrula</string>
     <string name="lock_unavailable">Önce telefonun ayarlarından bir ekran kilidi (PIN, desen, parmak izi) tanımlamalısın.</string>
+
+    <!-- Yedekleme (dışa / içe aktar) -->
+    <string name="settings_backup_export">Yedeği dışa aktar</string>
+    <string name="settings_backup_export_desc">Tüm kayıtlar, fotoğraflar ve sesler şifreli tek bir dosyada</string>
+    <string name="settings_backup_import">Yedekten geri yükle</string>
+    <string name="settings_backup_import_desc">Başka bir telefondan ya da eski sürümden kayıtları al</string>
+    <string name="backup_password_title_export">Yedek şifresi belirle</string>
+    <string name="backup_password_title_import">Yedek şifresini gir</string>
+    <string name="backup_password">Şifre</string>
+    <string name="backup_password_confirm">Şifre (tekrar)</string>
+    <string name="backup_password_hint">Bu şifreyi unutursan yedek açılamaz. En az 6 karakter.</string>
+    <string name="backup_password_mismatch">Şifreler aynı değil</string>
+    <string name="backup_password_short">Şifre en az 6 karakter olmalı</string>
+    <string name="backup_continue">Devam</string>
+    <string name="backup_working">Yedek hazırlanıyor…</string>
+    <string name="backup_export_done">Yedek kaydedildi · Kayıt sayısı: %1$d</string>
+    <string name="backup_import_done">Geri yüklendi · Yeni: %1$d, zaten vardı: %2$d</string>
+    <string name="backup_error_password">Şifre yanlış ya da dosya bir Logio yedeği değil</string>
+    <string name="backup_error">Yedekleme işlemi başarısız oldu</string>
 </resources>

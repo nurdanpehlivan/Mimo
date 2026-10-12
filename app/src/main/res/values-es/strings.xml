@@ -425,4 +425,23 @@
     <string name="lock_prompt_enable">Verifica para activar el bloqueo</string>
     <string name="lock_prompt_disable">Verifica para desactivar el bloqueo</string>
     <string name="lock_unavailable">Primero configura un bloqueo de pantalla (PIN, patrón o huella) en los ajustes del teléfono.</string>
+
+    <!-- Yedekleme (dışa / içe aktar) -->
+    <string name="settings_backup_export">Exportar copia de seguridad</string>
+    <string name="settings_backup_export_desc">Todas las entradas, fotos y audios en un archivo cifrado</string>
+    <string name="settings_backup_import">Restaurar desde copia</string>
+    <string name="settings_backup_import_desc">Trae entradas de otro teléfono o de una versión anterior</string>
+    <string name="backup_password_title_export">Crea una contraseña para la copia</string>
+    <string name="backup_password_title_import">Introduce la contraseña de la copia</string>
+    <string name="backup_password">Contraseña</string>
+    <string name="backup_password_confirm">Confirmar contraseña</string>
+    <string name="backup_password_hint">Si olvidas esta contraseña no podrás abrir la copia. Mínimo 6 caracteres.</string>
+    <string name="backup_password_mismatch">Las contraseñas no coinciden</string>
+    <string name="backup_password_short">La contraseña debe tener al menos 6 caracteres</string>
+    <string name="backup_continue">Continuar</string>
+    <string name="backup_working">Procesando la copia…</string>
+    <string name="backup_export_done">Copia guardada · Entradas: %1$d</string>
+    <string name="backup_import_done">Restaurado · Nuevas: %1$d, ya existentes: %2$d</string>
+    <string name="backup_error_password">Contraseña incorrecta o no es una copia de Logio</string>
+    <string name="backup_error">La operación de copia falló</string>
 </resources>
