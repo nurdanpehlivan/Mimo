@@ -13,3 +13,8 @@
 .externalNativeBuild
 .cxx
 local.properties
+
+# İmza anahtarları asla git'e girmesin
+*.jks
+*.keystore
+keystore.properties
