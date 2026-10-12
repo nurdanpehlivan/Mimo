@@ -11,6 +11,7 @@ import android.net.Uri
 import timber.log.Timber
 import androidx.annotation.RawRes
 import androidx.annotation.StringRes
+import androidx.media3.common.C
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MimeTypes
 import androidx.media3.common.util.UnstableApi
@@ -130,13 +131,17 @@ class JourneyVideoMaker(private val context: Context) {
             .setRemoveVideo(true)
             .build()
 
-        return Composition.Builder(
-            EditedMediaItemSequence.Builder(photoItems).build(),
-            EditedMediaItemSequence.Builder(listOf(musicItem)).setIsLooping(true).build()
-        )
-            // Fotoğraflarda ses yok; miksleyicinin sessiz taban üretmesi için ses izini zorla
-            .experimentalSetForceAudioTrack(true)
+        // Media3 1.11: her dizinin hangi izleri taşıdığı açıkça bildirilir.
+        // Fotoğraf dizisi yalnızca görüntü, müzik dizisi yalnızca ses; videonun sesi müzik dizisinden gelir.
+        val photoSequence = EditedMediaItemSequence.Builder(setOf(C.TRACK_TYPE_VIDEO))
+            .addItems(photoItems)
             .build()
+        val musicSequence = EditedMediaItemSequence.Builder(setOf(C.TRACK_TYPE_AUDIO))
+            .addItem(musicItem)
+            .setIsLooping(true)
+            .build()
+
+        return Composition.Builder(photoSequence, musicSequence).build()
     }
 
     private suspend fun export(composition: Composition, outputFile: File) =

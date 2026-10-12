@@ -7,7 +7,6 @@
 package com.example.logio.ui.theme
 
 import android.app.Activity
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Shapes
@@ -75,7 +74,10 @@ val LogioShapes = Shapes(
 
 @Composable
 fun LogioTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
+    // Ekranlar açık renk için tasarlandı (beyaz kartlar, krem zemin). Telefon karanlık moddayken
+    // rengi belirtilmemiş yazılar açık renk alıp beyaz kartlarda kayboluyordu; bu yüzden tema her zaman açık.
+    // Karanlık mod eklenecekse önce ekranlardaki sabit beyaz renkler temaya bağlanmalı.
+    darkTheme: Boolean = false,
     dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {

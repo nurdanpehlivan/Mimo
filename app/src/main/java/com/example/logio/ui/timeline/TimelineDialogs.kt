@@ -69,6 +69,7 @@ import com.example.logio.data.health.SleepSummary
 import com.example.logio.data.local.EntryType
 import com.example.logio.data.local.JournalEntryEntity
 import com.example.logio.ui.theme.MimoNavy
+import com.example.logio.ui.theme.MimoNavyMuted
 import com.example.logio.ui.theme.MimoPurple
 import com.example.logio.ui.share.AiChip
 import com.example.logio.ui.share.CategoryBadge
@@ -131,6 +132,9 @@ fun LogioDialog(
         onDismissRequest = onDismiss,
         shape = RoundedCornerShape(28.dp),
         containerColor = Color.White,
+        // Beyaz pencerede yazılar her zaman lacivert: temadan gelen renk açık olsa bile okunur kalır
+        titleContentColor = MimoNavy,
+        textContentColor = MimoNavy,
         title = { Text(title, fontWeight = FontWeight.ExtraBold, fontSize = 20.sp, color = MimoNavy, modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center) },
         text = { Box(modifier = Modifier.padding(top = 8.dp)) { content() } },
         confirmButton = confirmButton,
@@ -273,9 +277,9 @@ fun LocationAndMapDialog(onDismiss: () -> Unit, onSearch: (String) -> Unit, sear
     var tabIndex by remember { mutableIntStateOf(0) }
     LogioDialog(onDismiss, stringResource(R.string.dlg_add_location), confirmButton = {}) {
         Column(modifier = Modifier.fillMaxWidth().heightIn(max = 500.dp)) {
-            SecondaryTabRow(selectedTabIndex = tabIndex, containerColor = Color.Transparent, divider = {}) {
-                Tab(selected = tabIndex == 0, onClick = { tabIndex = 0 }, text = { Text(stringResource(R.string.dlg_search)) })
-                Tab(selected = tabIndex == 1, onClick = { tabIndex = 1 }, text = { Text(stringResource(R.string.dlg_pick_on_map)) })
+            SecondaryTabRow(selectedTabIndex = tabIndex, containerColor = Color.Transparent, contentColor = MimoNavy, divider = {}) {
+                Tab(selected = tabIndex == 0, onClick = { tabIndex = 0 }, selectedContentColor = MimoPurple, unselectedContentColor = MimoNavyMuted, text = { Text(stringResource(R.string.dlg_search), fontWeight = FontWeight.SemiBold) })
+                Tab(selected = tabIndex == 1, onClick = { tabIndex = 1 }, selectedContentColor = MimoPurple, unselectedContentColor = MimoNavyMuted, text = { Text(stringResource(R.string.dlg_pick_on_map), fontWeight = FontWeight.SemiBold) })
             }
             Spacer(modifier = Modifier.height(16.dp))
             if (tabIndex == 0) {
