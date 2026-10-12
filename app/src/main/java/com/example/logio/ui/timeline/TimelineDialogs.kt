@@ -79,6 +79,9 @@ import com.example.logio.ui.share.classifySharedLink
 import com.example.logio.ui.share.hostLabel
 import com.example.logio.ui.share.parseSharedText
 import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.Priority
+import com.google.android.gms.tasks.CancellationTokenSource
+import android.location.Location
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
@@ -303,27 +306,44 @@ fun LocationAndMapDialog(onDismiss: () -> Unit, onSearch: (String) -> Unit, sear
 fun GoogleMapPickerContent(onConfirm: (Double, Double, String, String) -> Unit) {
     val context = LocalContext.current
     val fusedLocationClient = remember { LocationServices.getFusedLocationProviderClient(context) }
-    val defaultLocation = LatLng(41.0082, 28.9784) // Istanbul
+    val defaultLocation = LatLng(41.0082, 28.9784) // Konum alınamazsa (izin yok / konum kapalı) İstanbul
     var selectedLocation by remember { mutableStateOf(defaultLocation) }
+    // Kullanıcı haritaya dokunup bir yer seçtiyse, sonradan gelen konum bu seçimi ezmez
+    var pickedByUser by remember { mutableStateOf(false) }
     var locationName by remember { mutableStateOf("") }
     var note by remember { mutableStateOf("") }
     val cameraPositionState = rememberCameraPositionState { position = CameraPosition.fromLatLngZoom(defaultLocation, 12f) }
-    
-    val hasPermission = remember(context) {
+
+    fun isLocationGranted() =
         ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED ||
-        ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
+            ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
+
+    var hasPermission by remember { mutableStateOf(isLocationGranted()) }
+    val permissionLauncher = rememberLauncherForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { result ->
+        hasPermission = result.values.any { it }
+    }
+    // Harita açılınca izin yoksa bir kez istenir (yaklaşık konum da yeterli)
+    LaunchedEffect(Unit) {
+        if (!hasPermission) {
+            permissionLauncher.launch(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION))
+        }
     }
 
+    // İzin varsa şu anki konuma git: önce son bilinen konum (anında), ardından güncel konum (birkaç saniye)
+    val locationRequest = remember { CancellationTokenSource() }
+    DisposableEffect(Unit) { onDispose { locationRequest.cancel() } }
     LaunchedEffect(hasPermission) {
-        if (hasPermission) {
-            fusedLocationClient.lastLocation.addOnSuccessListener { loc ->
-                loc?.let {
-                    val latLng = LatLng(it.latitude, it.longitude)
-                    selectedLocation = latLng
-                    cameraPositionState.move(CameraUpdateFactory.newLatLngZoom(latLng, 15f))
-                }
+        if (!hasPermission) return@LaunchedEffect
+        val moveTo: (Location?) -> Unit = { location ->
+            if (location != null && !pickedByUser) {
+                val latLng = LatLng(location.latitude, location.longitude)
+                selectedLocation = latLng
+                cameraPositionState.move(CameraUpdateFactory.newLatLngZoom(latLng, 15f))
             }
         }
+        fusedLocationClient.lastLocation.addOnSuccessListener(moveTo)
+        fusedLocationClient.getCurrentLocation(Priority.PRIORITY_BALANCED_POWER_ACCURACY, locationRequest.token)
+            .addOnSuccessListener(moveTo)
     }
 
     // İşaret bir kez oluşturulur; haritaya dokunulunca (selectedLocation değişince) yeni konuma taşınır
@@ -332,7 +352,7 @@ fun GoogleMapPickerContent(onConfirm: (Double, Double, String, String) -> Unit) 
 
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         Box(modifier = Modifier.fillMaxWidth().height(200.dp).clip(RoundedCornerShape(20.dp))) {
-            GoogleMap(modifier = Modifier.fillMaxSize(), cameraPositionState = cameraPositionState, properties = MapProperties(isMyLocationEnabled = hasPermission), uiSettings = MapUiSettings(myLocationButtonEnabled = hasPermission), onMapClick = { selectedLocation = it }) { Marker(state = markerState) }
+            GoogleMap(modifier = Modifier.fillMaxSize(), cameraPositionState = cameraPositionState, properties = MapProperties(isMyLocationEnabled = hasPermission), uiSettings = MapUiSettings(myLocationButtonEnabled = hasPermission), onMapClick = { selectedLocation = it; pickedByUser = true }) { Marker(state = markerState) }
         }
         OutlinedTextField(colors = logioFieldColors(), value = locationName, onValueChange = { locationName = it }, label = { Text(stringResource(R.string.dlg_place_name)) }, modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(16.dp))
         OutlinedTextField(colors = logioFieldColors(), value = note, onValueChange = { note = it }, label = { Text(stringResource(R.string.action_note)) }, modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(16.dp))
