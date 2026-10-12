@@ -1,21 +1,22 @@
-# Add project specific ProGuard rules here.
-# You can control the set of applied configuration files using the
-# proguardFiles setting in build.gradle.
+# Logio – R8 (küçültme) kuralları
 #
-# For more details, see
-#   http://developer.android.com/guide/developing/tools/proguard.html
+# Play Store sürümünde (release) R8 kullanılmayan kodu siler ve sınıf/alan adlarını kısaltır.
+# Kütüphanelerin çoğu (Room, Hilt, Firebase, Health Connect, Media3) kendi kurallarını getirir;
+# burada yalnızca Logio'ya özgü ve kütüphanelerin kapsamadığı durumlar var.
+# Bir kural silinmeden önce release sürüm telefonda denenmeli.
 
-# If your project uses WebView with JS, uncomment the following
-# and specify the fully qualified class name to the JavaScript interface
-# class:
-#-keepclassmembers class fqcn.of.javascript.interface.for.webview {
-#   public *;
-#}
+# --- Enum adları ---
+# EntryType veritabanına adıyla ("COFFEE") yazılır ve okunurken EntryType.valueOf("COFFEE") ile çevrilir.
+# Adlar değişirse eski kayıtların hepsi "not" (TEXT) görünür. JourneyTemplate da adıyla taşınır.
+# Güvenli olsun diye uygulamanın bütün enum'ları adlarıyla korunur.
+-keep enum com.example.logio.** { *; }
 
-# Uncomment this to preserve the line number information for
-# debugging stack traces.
-#-keepattributes SourceFile,LineNumberTable
+# --- SQLCipher ---
+# Veritabanı şifrelemesi yerel (C) kütüphane üzerinden çalışır; JNI'nin çağırdığı sınıflar korunmalı.
+-keep class net.zetetic.database.** { *; }
+-dontwarn net.zetetic.database.**
 
-# If you keep the line number information, uncomment this to
-# hide the original source file name.
-#-renamesourcefileattribute SourceFile
+# --- Hata raporları ---
+# Çökme kayıtlarında dosya adı ve satır numarası okunabilsin (Play Console bunları mapping dosyasıyla çözer)
+-keepattributes SourceFile,LineNumberTable
+-renamesourcefileattribute SourceFile

@@ -38,7 +38,9 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            // Play Store sürümü: kullanılmayan kod ve kaynaklar atılır, adlar kısaltılır (kurallar: proguard-rules.pro)
+            isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
