@@ -67,7 +67,7 @@ class JourneyVideoMaker(private val context: Context) {
         private const val WIDTH = 1080
         private const val HEIGHT = 1920
         private const val FRAME_RATE = 30
-        private const val PHOTO_DURATION_US = 2_500_000L
+        private const val PHOTO_DURATION_MS = 2_500L
 
         /** Yalnızca diskte gerçekten var olan, boş olmayan dosyaları bırakır. */
         fun existingPhotoFiles(paths: List<String>): List<File> =
@@ -116,9 +116,11 @@ class JourneyVideoMaker(private val context: Context) {
                 MediaItem.Builder()
                     .setUri(Uri.fromFile(file))
                     .setMimeType(MimeTypes.IMAGE_JPEG)
+                    // Media3 1.11: fotoğrafın ekranda kalma süresi MediaItem üzerinde verilir
+                    // (EditedMediaItem.setDurationUs fotoğraflarda artık okunmuyor: "Could not retrieve required duration")
+                    .setImageDurationMs(PHOTO_DURATION_MS)
                     .build()
             )
-                .setDurationUs(PHOTO_DURATION_US)
                 .setFrameRate(FRAME_RATE)
                 .setEffects(fitToCanvas)
                 .build()
