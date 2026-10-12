@@ -3,6 +3,7 @@
  *
  * - @HiltAndroidApp: Hilt'in bağımlılık zincirini burada başlatır.
  * - attachBaseContext: seçili dili uygular (Android 13 altı için).
+ * - Timber: logları yalnızca test (debug) sürümünde açar.
  * - installAppCheck: Firebase App Check'i kurar. Test sürümünde Debug, Play Store sürümünde
  *   Play Integrity sağlayıcısı kullanılır (src/debug ve src/release içindeki AppCheckSetup.kt).
  */
@@ -22,7 +23,8 @@ class LogioApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        Timber.plant(Timber.DebugTree())
+        // Loglar yalnızca Android Studio'dan çalıştırılan test sürümünde yazılır; Play Store sürümü hiçbir şey loglamaz
+        if (BuildConfig.DEBUG) Timber.plant(Timber.DebugTree())
         // Firebase, google-services eklentisi sayesinde kendiliğinden başlar; App Check ilk Gemini isteğinden önce kurulmalı
         installAppCheck()
     }

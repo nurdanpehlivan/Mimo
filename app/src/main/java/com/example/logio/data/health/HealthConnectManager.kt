@@ -1,9 +1,16 @@
+/*
+ * HealthConnectManager: Google Health Connect'ten adım ve uyku okur.
+ *
+ * Health Connect'in telefonda kurulu olup olmadığını ve izinleri kontrol eder; bugünkü toplam adımı
+ * (readSteps) ve dün geceki uykuyu (readLastNightSleep, uyanık geçen süreler düşülerek) döndürür.
+ * Logio adımın tek kaynağı olarak bunu kullanır. Hilt'e di/HealthModule.kt üzerinden verilir.
+ */
 package com.example.logio.data.health
 
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.util.Log
+import timber.log.Timber
 import androidx.health.connect.client.HealthConnectClient
 import androidx.health.connect.client.permission.HealthPermission
 import androidx.health.connect.client.records.SleepSessionRecord
@@ -24,7 +31,6 @@ data class SleepSummary(
 class HealthConnectManager(private val context: Context) {
 
     companion object {
-        private const val TAG = "HealthConnectManager"
         private const val HEALTH_CONNECT_PACKAGE = "com.google.android.apps.healthdata"
     }
 
@@ -83,10 +89,7 @@ class HealthConnectManager(private val context: Context) {
             try {
                 context.startActivity(webIntent)
             } catch (e: Exception) {
-                Log.e(
-                    TAG,
-                    "Health Connect mağaza sayfası açılamadı: ${e.message}"
-                )
+                Timber.e(e, "Health Connect mağaza sayfası açılamadı")
             }
         }
     }
@@ -95,9 +98,6 @@ class HealthConnectManager(private val context: Context) {
         val granted = getGrantedPermissions()
         val missing = permissions - granted
 
-        Log.d(TAG, "İstenen izinler: $permissions")
-        Log.d(TAG, "Verilen izinler: $granted")
-        Log.d(TAG, "Eksik izinler: $missing")
 
         return missing.isEmpty()
     }
@@ -118,7 +118,7 @@ class HealthConnectManager(private val context: Context) {
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
-            Log.e(TAG, "İzinler okunamadı: ${e.message}")
+            Timber.e(e, "İzinler okunamadı")
             emptySet()
         }
     }
@@ -133,7 +133,7 @@ class HealthConnectManager(private val context: Context) {
         }
 
         if (!hasSleepPermission()) {
-            Log.w(TAG, "Uyku okuma izni verilmemiş.")
+            Timber.w("Uyku okuma izni verilmemiş.")
             return emptyList()
         }
 
@@ -165,7 +165,7 @@ class HealthConnectManager(private val context: Context) {
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
-            Log.e(TAG, "Uyku verisi okunamadı: ${e.message}")
+            Timber.e(e, "Uyku verisi okunamadı")
             emptyList()
         }
     }
@@ -211,7 +211,7 @@ class HealthConnectManager(private val context: Context) {
         }
 
         if (!hasStepsPermission()) {
-            Log.w(TAG, "Adım okuma izni verilmemiş.")
+            Timber.w("Adım okuma izni verilmemiş.")
             return 0L
         }
 
@@ -231,7 +231,7 @@ class HealthConnectManager(private val context: Context) {
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
-            Log.e(TAG, "Adım verisi okunamadı: ${e.message}")
+            Timber.e(e, "Adım verisi okunamadı")
             0L
         }
     }

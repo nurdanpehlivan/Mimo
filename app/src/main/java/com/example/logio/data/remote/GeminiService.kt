@@ -9,7 +9,7 @@
 package com.example.logio.data.remote
 
 import android.graphics.Bitmap
-import android.util.Log
+import timber.log.Timber
 import com.google.firebase.Firebase
 import com.google.firebase.ai.GenerativeModel
 import com.google.firebase.ai.ai
@@ -42,7 +42,6 @@ class GeminiQuotaException(message: String) : Exception(message)
 class GeminiService @Inject constructor() {
 
     companion object {
-        private const val TAG = "LOGIO_AI"
         private const val MAX_IMAGE_DIMENSION = 800
     }
 
@@ -78,7 +77,7 @@ class GeminiService @Inject constructor() {
 
         for (modelName in candidateModels) {
             try {
-                Log.d(TAG, "Yemek analizi deneniyor (Model: $modelName)...")
+                Timber.d("Yemek analizi deneniyor (Model: $modelName)...")
 
                 val response = model(modelName, generationConfig { responseMimeType = "application/json" })
                     .generateContent(
@@ -89,11 +88,11 @@ class GeminiService @Inject constructor() {
                     )
 
                 val rawText = response.text?.trim()
-                Log.d(TAG, "Gemini ($modelName) cevabı: $rawText")
+                Timber.d("Gemini ($modelName) yanıt verdi")
 
                 if (!rawText.isNullOrBlank()) {
                     parseMealJson(rawText)?.let {
-                        Log.d(TAG, "Yemek analizi başarılı: $modelName")
+                        Timber.d("Yemek analizi başarılı: $modelName")
                         return@withContext it
                     }
                 }
@@ -104,7 +103,7 @@ class GeminiService @Inject constructor() {
             }
         }
 
-        Log.e(TAG, "Tüm modeller denendi.")
+        Timber.e("Tüm modeller denendi.")
         null
     }
 
@@ -123,7 +122,7 @@ class GeminiService @Inject constructor() {
                 fat = json.optDouble("fat", 0.0)
             )
         } catch (e: Exception) {
-            Log.e(TAG, "Yemek JSON ayrıştırma hatası: ${e.message}")
+            Timber.e(e, "Yemek JSON ayrıştırma hatası")
             null
         }
     }
@@ -137,7 +136,7 @@ class GeminiService @Inject constructor() {
 
         for (modelName in candidateModels) {
             try {
-                Log.d(TAG, "STT deneniyor (Model: $modelName)...")
+                Timber.d("STT deneniyor (Model: $modelName)...")
 
                 val response = model(modelName).generateContent(
                     content {
@@ -147,7 +146,7 @@ class GeminiService @Inject constructor() {
                 )
 
                 response.text?.trim()?.takeIf { it.isNotBlank() }?.let {
-                    Log.d(TAG, "STT başarılı ($modelName): $it")
+                    Timber.d("Yazıya çevirme başarılı ($modelName)")
                     return@withContext it
                 }
             } catch (e: CancellationException) {
@@ -166,7 +165,7 @@ class GeminiService @Inject constructor() {
      */
     private suspend fun handleModelError(modelName: String, e: Exception) {
         val msg = e.message ?: ""
-        Log.w(TAG, "Hata ($modelName): $msg")
+        Timber.w("Hata ($modelName): $msg")
 
         if (isQuotaExhausted(e)) {
             throw GeminiQuotaException("Günlük ücretsiz limit doldu")
@@ -175,7 +174,7 @@ class GeminiService @Inject constructor() {
             delay(3000L)
         }
         if (msg.contains("404") || msg.contains("NOT_FOUND")) {
-            Log.w(TAG, "$modelName bulunamadı, sonraki modele geçiliyor.")
+            Timber.w("$modelName bulunamadı, sonraki modele geçiliyor.")
         }
     }
 

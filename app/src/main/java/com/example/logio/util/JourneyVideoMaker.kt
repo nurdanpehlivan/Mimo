@@ -1,8 +1,14 @@
+/*
+ * JourneyVideoMaker: Seçilen fotoğraflardan müzikli "Journey" videosu üretir (Media3 Transformer).
+ *
+ * Her fotoğraf birkaç saniyelik bir sahneye dönüştürülür, sahneler sırayla birleştirilir ve
+ * seçilen temanın müziği (res/raw/theme_*.m4a) eklenir. JourneyTemplate hazır şablonları tanımlar.
+ */
 package com.example.logio.util
 
 import android.content.Context
 import android.net.Uri
-import android.util.Log
+import timber.log.Timber
 import androidx.annotation.RawRes
 import androidx.annotation.StringRes
 import androidx.media3.common.MediaItem
@@ -57,7 +63,6 @@ class NoJourneyPhotosException : IllegalStateException("En az 1 fotoğraf olmal�
 class JourneyVideoMaker(private val context: Context) {
 
     companion object {
-        private const val TAG = "JOURNEY_DEBUG"
         private const val WIDTH = 1080
         private const val HEIGHT = 1920
         private const val FRAME_RATE = 30
@@ -83,7 +88,7 @@ class JourneyVideoMaker(private val context: Context) {
         if (photos.isEmpty()) throw NoJourneyPhotosException()
 
         val template = JourneyTemplate.fromName(templateName)
-        Log.d(TAG, "Video başlıyor: ${photos.size} fotoğraf, şablon=${template.name}")
+        Timber.d("Video başlıyor: ${photos.size} fotoğraf, şablon=${template.name}")
 
         withContext(Dispatchers.IO) { if (outputFile.exists()) outputFile.delete() }
         try {
@@ -95,7 +100,7 @@ class JourneyVideoMaker(private val context: Context) {
             throw e
         }
 
-        Log.d(TAG, "Video hazır: ${outputFile.absolutePath} (${outputFile.length()} bayt)")
+        Timber.d("Video hazır: ${outputFile.absolutePath} (${outputFile.length()} bayt)")
         return outputFile
     }
 
@@ -145,7 +150,7 @@ class JourneyVideoMaker(private val context: Context) {
                     }
 
                     override fun onError(composition: Composition, exportResult: ExportResult, exportException: ExportException) {
-                        Log.e(TAG, "Dışa aktarma hatası (${exportException.errorCodeName}): ${exportException.message}", exportException)
+                        Timber.e(exportException, "Dışa aktarma hatası (${exportException.errorCodeName})")
                         if (continuation.isActive) continuation.resumeWithException(exportException)
                     }
                 })

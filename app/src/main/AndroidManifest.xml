@@ -15,11 +15,11 @@
         <package android:name="com.google.android.apps.healthdata" />
     </queries>
 
+    <!-- allowBackup=false: Android 11 ve altında yedeği tamamen kapatır; Android 12+ için kurallar data_extraction_rules.xml içinde -->
     <application
         android:name=".LogioApp"
-        android:allowBackup="true"
+        android:allowBackup="false"
         android:dataExtractionRules="@xml/data_extraction_rules"
-        android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:localeConfig="@xml/locales_config"

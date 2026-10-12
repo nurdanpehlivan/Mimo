@@ -14,7 +14,6 @@ package com.example.logio.ui.timeline
 import android.content.Context
 import android.graphics.BitmapFactory
 import android.net.Uri
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.logio.data.audio.AudioPlayerManager
@@ -394,7 +393,7 @@ class TimelineViewModel @Inject constructor(
                     )
                 )
 
-                Timber.d("Yemek Timeline'a kaydedildi: ${res.mealName}")
+                Timber.d("Yemek analizi kaydedildi")
 
             } catch (e: Exception) {
                 Timber.e(e, "Meal analysis error")
@@ -427,7 +426,7 @@ class TimelineViewModel @Inject constructor(
         val result = audioRecorderManager.stopRecording()
 
         if (result == null) {
-            Log.e("LOGIO_STT", "HATA: audioRecorderManager null dondu!")
+            Timber.e("Ses kaydı durdurulamadı: kayıt sonucu boş")
             return null
         }
 
@@ -470,7 +469,7 @@ class TimelineViewModel @Inject constructor(
                 val maxPhotos = 40
                 val photos = if (allPhotos.size <= maxPhotos) allPhotos else
                     List(maxPhotos) { i -> allPhotos[i * (allPhotos.size - 1) / (maxPhotos - 1)] }
-                Log.d("JOURNEY_DEBUG", "Şablon: $theme, aday: ${candidatePaths.size}, geçerli fotoğraf: ${photos.size}")
+                Timber.d("Şablon: $theme, aday: ${candidatePaths.size}, geçerli fotoğraf: ${photos.size}")
 
                 if (photos.isEmpty()) {
                     _playbackError.value = str(R.string.err_journey_no_photos_range)
@@ -490,13 +489,12 @@ class TimelineViewModel @Inject constructor(
                         createdAt = System.currentTimeMillis()
                     )
                 )
-                Log.d("JOURNEY_DEBUG", "Journey Video Timeline'a kaydedildi.")
+                Timber.d("Journey Video Timeline'a kaydedildi.")
 
             } catch (e: NoJourneyPhotosException) {
                 _playbackError.value = str(R.string.err_journey_no_photos)
             } catch (e: Exception) {
                 Timber.e(e, "Journey videosu oluşturulamadı")
-                Log.e("JOURNEY_DEBUG", "Journey Video HATASI: ${e.message}", e)
                 _playbackError.value = str(R.string.err_journey_failed)
             } finally {
                 _isAnalyzing.value = false

@@ -110,7 +110,6 @@ import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
-import android.util.Log
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TimelineScreen(
@@ -144,37 +143,17 @@ fun TimelineScreen(
     val permissionsLauncher = rememberLauncherForActivityResult(
         PermissionController.createRequestPermissionResultContract()
     ) { grantedPermissions ->
-
-        Log.d("HEALTH_DEBUG", "========== İZİN CALLBACK ==========")
-        Log.d("HEALTH_DEBUG", "Verilen izinler: $grantedPermissions")
-
         // Uyku penceresi açıksa izin sonrası Health Connect verisini yeniden oku
         viewModel.loadHealthSleep()
 
         coroutineScope.launch {
-            val missingPermissions =
-                healthConnectManager.permissions - grantedPermissions
-
-            Log.d(
-                "HEALTH_DEBUG",
-                "İstenen izinler: ${healthConnectManager.permissions}"
-            )
-            Log.d(
-                "HEALTH_DEBUG",
-                "Eksik izinler: $missingPermissions"
-            )
-
+            val missingPermissions = healthConnectManager.permissions - grantedPermissions
             if (missingPermissions.isEmpty()) {
-                Log.d("HEALTH_DEBUG", "TÜM İZİNLER VERİLDİ")
-
                 viewModel.syncHealthData()
-
                 snackbarHostState.showSnackbar(
                     context.getString(R.string.health_syncing)
                 )
             } else {
-                Log.d("HEALTH_DEBUG", "İZİNLER EKSİK")
-
                 snackbarHostState.showSnackbar(
                     context.getString(R.string.health_permissions_missing)
                 )
@@ -316,51 +295,17 @@ fun TimelineScreen(
             HealthConnectClient.SDK_AVAILABLE -> {
 
                 coroutineScope.launch {
-
-                    val grantedPermissions =
-                        healthConnectManager.getGrantedPermissions()
-
                     val missingPermissions =
-                        healthConnectManager.permissions - grantedPermissions
-
-                    Log.d(
-                        "HEALTH_DEBUG",
-                        "========== SAĞLIK SENKRONİZASYONU =========="
-                    )
-
-                    Log.d(
-                        "HEALTH_DEBUG",
-                        "Verilen: $grantedPermissions"
-                    )
-
-                    Log.d(
-                        "HEALTH_DEBUG",
-                        "Eksik: $missingPermissions"
-                    )
+                        healthConnectManager.permissions - healthConnectManager.getGrantedPermissions()
 
                     if (missingPermissions.isEmpty()) {
-
-                        Log.d(
-                            "HEALTH_DEBUG",
-                            "Tüm Health Connect izinleri mevcut."
-                        )
-
                         viewModel.syncHealthData()
-
                         snackbarHostState.showSnackbar(
                             context.getString(R.string.health_syncing)
                         )
-
                     } else {
-
-                        Log.d(
-                            "HEALTH_DEBUG",
-                            "Eksik izinler isteniyor: $missingPermissions"
-                        )
-
-                        permissionsLauncher.launch(
-                            missingPermissions
-                        )
+                        // Eksik izinler istenir; sonuç permissionsLauncher'a döner
+                        permissionsLauncher.launch(missingPermissions)
                     }
                 }
             }
