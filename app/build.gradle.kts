@@ -61,6 +61,11 @@ android {
     }
 }
 
+// Room her veritabanı sürümünün yapısını buraya yazar (migration'ları yazmak ve test etmek için)
+ksp {
+    arg("room.schemaLocation", "$projectDir/schemas")
+}
+
 dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
