@@ -131,8 +131,8 @@ class JourneyVideoMaker(private val context: Context) {
             .build()
 
         return Composition.Builder(
-            EditedMediaItemSequence(photoItems),
-            EditedMediaItemSequence(listOf(musicItem), /* isLooping = */ true)
+            EditedMediaItemSequence.Builder(photoItems).build(),
+            EditedMediaItemSequence.Builder(listOf(musicItem)).setIsLooping(true).build()
         )
             // Fotoğraflarda ses yok; miksleyicinin sessiz taban üretmesi için ses izini zorla
             .experimentalSetForceAudioTrack(true)

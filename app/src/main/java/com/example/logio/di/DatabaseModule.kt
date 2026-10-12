@@ -1,3 +1,9 @@
+/*
+ * DatabaseModule: Hilt'e şifreli veritabanını nasıl kuracağını anlatan "tarif".
+ *
+ * Açılışta parolayı alır (DatabaseSecurity), eski şifresiz veritabanı varsa şifreler,
+ * Room'u SQLCipher ile kurar ve JournalDao'yu tek örnek (@Singleton) olarak dağıtır.
+ */
 package com.example.logio.di
 
 import android.content.Context
@@ -39,7 +45,7 @@ object DatabaseModule {
             .apply { if (encrypted) openHelperFactory(SupportOpenHelperFactory(passphrase)) }
             // Sürüm artırılırsa LogioDatabase'e Migration yazılmalı; yazılmazsa kayıtlar SİLİNMEZ, uygulama hata verir.
             // Yalnızca eski bir sürüme geri dönülürse (downgrade) tablo sıfırlanır.
-            .fallbackToDestructiveMigrationOnDowngrade()
+            .fallbackToDestructiveMigrationOnDowngrade(dropAllTables = true)
             .build()
     }
 

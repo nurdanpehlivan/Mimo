@@ -52,7 +52,8 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.LocalClipboard
+import kotlinx.coroutines.launch
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import com.example.logio.R
@@ -272,7 +273,7 @@ fun LocationAndMapDialog(onDismiss: () -> Unit, onSearch: (String) -> Unit, sear
     var tabIndex by remember { mutableIntStateOf(0) }
     LogioDialog(onDismiss, stringResource(R.string.dlg_add_location), confirmButton = {}) {
         Column(modifier = Modifier.fillMaxWidth().heightIn(max = 500.dp)) {
-            TabRow(selectedTabIndex = tabIndex, containerColor = Color.Transparent, divider = {}) {
+            SecondaryTabRow(selectedTabIndex = tabIndex, containerColor = Color.Transparent, divider = {}) {
                 Tab(selected = tabIndex == 0, onClick = { tabIndex = 0 }, text = { Text(stringResource(R.string.dlg_search)) })
                 Tab(selected = tabIndex == 1, onClick = { tabIndex = 1 }, text = { Text(stringResource(R.string.dlg_pick_on_map)) })
             }
@@ -321,9 +322,13 @@ fun GoogleMapPickerContent(onConfirm: (Double, Double, String, String) -> Unit) 
         }
     }
 
+    // İşaret bir kez oluşturulur; haritaya dokunulunca (selectedLocation değişince) yeni konuma taşınır
+    val markerState = rememberMarkerState(position = selectedLocation)
+    LaunchedEffect(selectedLocation) { markerState.position = selectedLocation }
+
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         Box(modifier = Modifier.fillMaxWidth().height(200.dp).clip(RoundedCornerShape(20.dp))) {
-            GoogleMap(modifier = Modifier.fillMaxSize(), cameraPositionState = cameraPositionState, properties = MapProperties(isMyLocationEnabled = hasPermission), uiSettings = MapUiSettings(myLocationButtonEnabled = hasPermission), onMapClick = { selectedLocation = it }) { Marker(state = MarkerState(position = selectedLocation)) }
+            GoogleMap(modifier = Modifier.fillMaxSize(), cameraPositionState = cameraPositionState, properties = MapProperties(isMyLocationEnabled = hasPermission), uiSettings = MapUiSettings(myLocationButtonEnabled = hasPermission), onMapClick = { selectedLocation = it }) { Marker(state = markerState) }
         }
         OutlinedTextField(colors = logioFieldColors(), value = locationName, onValueChange = { locationName = it }, label = { Text(stringResource(R.string.dlg_place_name)) }, modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(16.dp))
         OutlinedTextField(colors = logioFieldColors(), value = note, onValueChange = { note = it }, label = { Text(stringResource(R.string.action_note)) }, modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(16.dp))
@@ -469,7 +474,7 @@ fun SleepInputDialog(
                         val timeFormat = remember { DateTimeFormatter.ofPattern("HH:mm").withZone(ZoneId.systemDefault()) }
                         val s = healthSleepState.summary
                         Text(
-                            text = stringResource(R.string.hours_value, String.format(Locale.getDefault(), "%.1f", s.hours)),
+                            text = stringResource(R.string.hours_value, String.format(currentLocale(), "%.1f", s.hours)),
                             fontWeight = FontWeight.ExtraBold,
                             fontSize = 28.sp,
                             color = MimoNavy
@@ -520,7 +525,8 @@ fun VideoInputDialog(onDismiss: () -> Unit, onConfirm: (Uri, String) -> Unit) {
  */
 @Composable
 fun LinkInputDialog(onDismiss: () -> Unit, onConfirm: (String, String) -> Unit) {
-    val clipboard = LocalClipboardManager.current
+    val clipboard = LocalClipboard.current
+    val scope = rememberCoroutineScope()
     var input by remember { mutableStateOf("") }
     var title by remember { mutableStateOf("") }
     var titleEdited by remember { mutableStateOf(false) }
@@ -556,7 +562,15 @@ fun LinkInputDialog(onDismiss: () -> Unit, onConfirm: (String, String) -> Unit) 
                 placeholder = { Text(stringResource(R.string.dlg_paste_link_here)) },
                 leadingIcon = { Icon(Icons.Rounded.Link, contentDescription = null, tint = MimoPurple) },
                 trailingIcon = {
-                    TextButton(onClick = { clipboard.getText()?.text?.let { input = it } }) {
+                    TextButton(onClick = {
+                        // Panodaki metni yapıştır (yeni pano API'si askıya alınabilen bir fonksiyon)
+                        scope.launch {
+                            clipboard.getClipEntry()?.clipData
+                                ?.takeIf { it.itemCount > 0 }
+                                ?.getItemAt(0)?.text?.toString()
+                                ?.let { input = it }
+                        }
+                    }) {
                         Text(stringResource(R.string.paste), color = MimoPurple, fontWeight = FontWeight.SemiBold)
                     }
                 },

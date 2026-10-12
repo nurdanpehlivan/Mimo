@@ -2,7 +2,6 @@ import java.util.Properties
 
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
@@ -11,12 +10,12 @@ plugins {
 
 android {
     namespace = "com.example.logio"
-    compileSdk = 35
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "com.example.logio"
         minSdk = 26
-        targetSdk = 35
+        targetSdk = 36
         versionCode = 9
         versionName = "1.8"
 
@@ -78,38 +77,38 @@ dependencies {
     implementation("androidx.compose.material:material-icons-extended")
 
     // Biometric Auth
-    implementation("androidx.biometric:biometric:1.2.0-alpha05")
+    implementation("androidx.biometric:biometric:1.1.0")
 
     implementation(libs.hilt.android)
     add("ksp", libs.hilt.compiler)
-    implementation(libs.androidx.hilt.navigation.compose)
+    implementation(libs.androidx.hilt.lifecycle.viewmodel.compose)
 
     implementation(libs.room.runtime)
     implementation(libs.room.ktx)
     add("ksp", libs.room.compiler)
-    implementation("net.zetetic:sqlcipher-android:4.6.1")
+    implementation("net.zetetic:sqlcipher-android:4.19.1")
 
     implementation(libs.coil.compose)
     implementation(libs.timber)
 
-    implementation("com.google.maps.android:maps-compose:4.4.1")
+    implementation("com.google.maps.android:maps-compose:6.4.0")
     implementation(libs.play.services.maps)
-    implementation("com.google.android.gms:play-services-location:21.3.0")
+    implementation("com.google.android.gms:play-services-location:21.4.0")
 
     // Firebase: Gemini istekleri (AI Logic) ve App Check
     // Test sürümü Debug sağlayıcısını, Play Store sürümü Play Integrity'yi kullanır (src/debug, src/release)
-    implementation(platform("com.google.firebase:firebase-bom:34.19.0"))
+    implementation(platform("com.google.firebase:firebase-bom:35.0.0"))
     implementation("com.google.firebase:firebase-ai")
     implementation("com.google.firebase:firebase-appcheck-playintegrity")
     debugImplementation("com.google.firebase:firebase-appcheck-debug")
 
     // Media3 Transformer
-    implementation("androidx.media3:media3-transformer:1.3.1")
-    implementation("androidx.media3:media3-effect:1.3.1")
-    implementation("androidx.media3:media3-common:1.3.1")
+    implementation("androidx.media3:media3-transformer:1.11.1")
+    implementation("androidx.media3:media3-effect:1.11.1")
+    implementation("androidx.media3:media3-common:1.11.1")
 
     // Health Connect
-    implementation("androidx.health.connect:connect-client:1.1.0-alpha11")
+    implementation("androidx.health.connect:connect-client:1.1.0")
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

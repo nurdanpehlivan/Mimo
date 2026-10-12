@@ -1,3 +1,9 @@
+/*
+ * Theme: Uygulamanın Material3 teması (LogioTheme).
+ *
+ * Açık/koyu renk şemaları, yazı tipleri ve durum/gezinme çubuğu görünümü burada ayarlanır.
+ * MainActivity tüm ekranları LogioTheme { ... } ile sarar.
+ */
 package com.example.logio.ui.theme
 
 import android.app.Activity
@@ -79,7 +85,10 @@ fun LogioTheme(
     if (!view.isInEditMode) {
         SideEffect {
             val window = (view.context as Activity).window
+            // Android 15+ bu renkleri yok sayar (kenardan kenara çizim zorunlu); eski sürümlerde görünüm aynı kalsın diye duruyor
+            @Suppress("DEPRECATION")
             window.statusBarColor = Color.Transparent.toArgb()
+            @Suppress("DEPRECATION")
             window.navigationBarColor = if (darkTheme) Color(0xFF16142B).toArgb() else MimoCream.toArgb()
             WindowCompat.getInsetsController(window, view).apply {
                 isAppearanceLightStatusBars = !darkTheme

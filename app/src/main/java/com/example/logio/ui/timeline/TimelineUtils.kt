@@ -7,11 +7,21 @@
 package com.example.logio.ui.timeline
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ReadOnlyComposable
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import com.example.logio.R
 import com.example.logio.data.local.EntryType
 import com.example.logio.data.local.JournalEntryEntity
 import java.util.*
+
+/**
+ * Ekranın o anki dili. Compose içinde Locale.getDefault() yerine bu kullanılır:
+ * dil değişince Compose bunu fark edip sayıları ve tarihleri yeni dille yeniden biçimlendirir.
+ */
+@Composable
+@ReadOnlyComposable
+fun currentLocale(): Locale = LocalConfiguration.current.locales[0]
 
 fun isSameCalendarDay(timeMillisA: Long, timeMillisB: Long): Boolean {
     val calA = Calendar.getInstance().apply { timeInMillis = timeMillisA }

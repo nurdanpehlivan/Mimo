@@ -244,7 +244,7 @@ internal fun TimelineRailRow(
 
 @Composable
 internal fun TimelineDateHeader(date: Date, drawRailAbove: Boolean) {
-    val trLocale = Locale.getDefault()
+    val trLocale = currentLocale()
     val dayMonthFormat = remember { SimpleDateFormat("d MMMM", trLocale) }
     val yearFormat = remember { SimpleDateFormat("yyyy", trLocale) }
     val weekdayFormat = remember { SimpleDateFormat("EEEE", trLocale) }

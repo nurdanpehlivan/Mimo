@@ -42,7 +42,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.health.connect.client.HealthConnectClient
 import androidx.health.connect.client.PermissionController
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.example.logio.R
 import com.example.logio.data.local.EntryType
 import com.example.logio.data.local.JournalEntryEntity
@@ -88,6 +88,10 @@ fun TimelineScreen(
     val coroutineScope = rememberCoroutineScope()
     val healthConnectManager = viewModel.healthConnectManager
     val snackbarHostState = remember { SnackbarHostState() }
+    // Uyarı yazıları çizim sırasında alınır; dil değişince yenileriyle güncellenir
+    val healthSyncingText = stringResource(R.string.health_syncing)
+    val healthPermissionsMissingText = stringResource(R.string.health_permissions_missing)
+    val healthUnsupportedText = stringResource(R.string.health_unsupported)
 
     val permissionsLauncher = rememberLauncherForActivityResult(
         PermissionController.createRequestPermissionResultContract()
@@ -100,11 +104,11 @@ fun TimelineScreen(
             if (missingPermissions.isEmpty()) {
                 viewModel.syncHealthData()
                 snackbarHostState.showSnackbar(
-                    context.getString(R.string.health_syncing)
+                    healthSyncingText
                 )
             } else {
                 snackbarHostState.showSnackbar(
-                    context.getString(R.string.health_permissions_missing)
+                    healthPermissionsMissingText
                 )
             }
         }
@@ -250,7 +254,7 @@ fun TimelineScreen(
                     if (missingPermissions.isEmpty()) {
                         viewModel.syncHealthData()
                         snackbarHostState.showSnackbar(
-                            context.getString(R.string.health_syncing)
+                            healthSyncingText
                         )
                     } else {
                         // Eksik izinler istenir; sonuç permissionsLauncher'a döner
@@ -268,7 +272,7 @@ fun TimelineScreen(
 
                 coroutineScope.launch {
                     snackbarHostState.showSnackbar(
-                        context.getString(R.string.health_unsupported)
+                        healthUnsupportedText
                     )
                 }
             }

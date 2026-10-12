@@ -458,7 +458,7 @@ internal fun HealthActivityCard(
                 }
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = String.format(Locale.getDefault(), "%,d", todaySteps),
+                    text = String.format(currentLocale(), "%,d", todaySteps),
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold,
                     color = MimoNavy,
@@ -488,7 +488,7 @@ internal fun HealthActivityCard(
                         modifier = Modifier.clickable(onClick = onConnectHealthClick)
                     )
                 } else {
-                    Text(stringResource(R.string.goal_value, String.format(Locale.getDefault(), "%,d", stepGoal)), style = MaterialTheme.typography.labelSmall, color = CardMutedText)
+                    Text(stringResource(R.string.goal_value, String.format(currentLocale(), "%,d", stepGoal)), style = MaterialTheme.typography.labelSmall, color = CardMutedText)
                 }
             }
 
@@ -574,7 +574,7 @@ private fun TodoCard(
                     color = MimoNavy
                 )
                 Text(
-                    text = stringResource(R.string.todo_progress, doneCount, tasks.size, SimpleDateFormat("HH:mm", Locale.getDefault()).format(Date(entry.createdAt))),
+                    text = stringResource(R.string.todo_progress, doneCount, tasks.size, SimpleDateFormat("HH:mm", currentLocale()).format(Date(entry.createdAt))),
                     style = MaterialTheme.typography.labelMedium,
                     color = CardMutedText
                 )

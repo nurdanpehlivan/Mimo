@@ -40,7 +40,7 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.example.logio.BuildConfig
 import com.example.logio.R
 import android.app.Activity
@@ -108,6 +108,11 @@ fun ProfileScreen(
     var showEditDialog by remember { mutableStateOf(false) }
     var detailEntry by remember { mutableStateOf<JournalEntryEntity?>(null) }
     val context = LocalContext.current
+    // Kilit ayarındaki yazılar çizim sırasında alınır; dil değişince yenileriyle güncellenir
+    val lockUnavailableText = stringResource(R.string.lock_unavailable)
+    val lockPromptTitle = stringResource(R.string.lock_prompt_title)
+    val lockPromptEnable = stringResource(R.string.lock_prompt_enable)
+    val lockPromptDisable = stringResource(R.string.lock_prompt_disable)
     val language = remember { AppLocale.current(context) }
     var showLanguageDialog by remember { mutableStateOf(false) }
     var lockEnabled by remember { mutableStateOf(AppLock.isEnabled(context)) }
@@ -172,14 +177,14 @@ fun ProfileScreen(
                     onToggle = { wanted ->
                         val activity = context.findActivity() as? FragmentActivity ?: return@AppLockRow
                         if (!AppLock.isAvailable(context)) {
-                            Toast.makeText(context, context.getString(R.string.lock_unavailable), Toast.LENGTH_LONG).show()
+                            Toast.makeText(context, lockUnavailableText, Toast.LENGTH_LONG).show()
                             return@AppLockRow
                         }
                         // Açarken de kapatırken de doğrulama istenir: ayarı sadece telefonun sahibi değiştirebilsin
                         AppLock.authenticate(
                             activity = activity,
-                            title = context.getString(R.string.lock_prompt_title),
-                            subtitle = context.getString(if (wanted) R.string.lock_prompt_enable else R.string.lock_prompt_disable),
+                            title = lockPromptTitle,
+                            subtitle = if (wanted) lockPromptEnable else lockPromptDisable,
                             onSuccess = {
                                 AppLock.setEnabled(context, wanted)
                                 lockEnabled = wanted
