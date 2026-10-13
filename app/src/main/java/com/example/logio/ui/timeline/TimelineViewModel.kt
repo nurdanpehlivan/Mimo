@@ -73,6 +73,9 @@ sealed interface HealthSleepState {
     data class Found(val summary: SleepSummary) : HealthSleepState
 }
 
+// Health Connect eşitlemesinde okunan gün sayısı (bugün dahil)
+private const val STEP_SYNC_DAYS = 7
+
 @HiltViewModel
 class TimelineViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
@@ -560,10 +563,20 @@ class TimelineViewModel @Inject constructor(
                 if (healthConnectManager.hasAllPermissions()) {
                     val now = Instant.now()
                     val zoneId = ZoneId.systemDefault()
-                    val startOfDay = ZonedDateTime.now(zoneId).toLocalDate().atStartOfDay(zoneId).toInstant()
+                    val today = ZonedDateTime.now(zoneId).toLocalDate()
 
-                    val steps = healthConnectManager.readSteps(startOfDay, now)
-                    upsertTodaySteps(steps, zoneId)
+                    // Her gün 00:00'dan ertesi gün 00:00'a kadar okunur, "şu an"a kadar değil: Samsung Health günün
+                    // adımlarını 00:00–23:59 arası TEK bir kayıt olarak yazıyor ve aralık şu anda biterse Health Connect
+                    // bu kaydı oranlıyor (öğlen 8.405 adım → 4.555 görünüyordu).
+                    // Son 7 gün okunur: eski sürümün yazdığı eksik değerler düzelir, uygulamanın açılmadığı günler tamamlanır.
+                    val dailySteps = (0 until STEP_SYNC_DAYS).map { daysBack ->
+                        val day = today.minusDays(daysBack.toLong())
+                        day to healthConnectManager.readSteps(
+                            day.atStartOfDay(zoneId).toInstant(),
+                            day.plusDays(1).atStartOfDay(zoneId).toInstant()
+                        )
+                    }
+                    upsertDailySteps(dailySteps, today, zoneId)
 
                     healthConnectManager.readLastNightSleep(now)?.let { summary ->
                         insertHealthSleepIfNew(summary, note = "")
@@ -577,28 +590,34 @@ class TimelineViewModel @Inject constructor(
 
     // Adım gün boyu biriken bir toplam: gün başına tek kayıt tutulur, her eşitlemede güncellenir.
     // Eski sürümün her eşitlemede eklediği kopyalar da burada temizlenir (her gün için en son kayıt kalır).
-    private suspend fun upsertTodaySteps(steps: Long, zoneId: ZoneId) {
+    private suspend fun upsertDailySteps(dailySteps: List<Pair<LocalDate, Long>>, today: LocalDate, zoneId: ZoneId) {
         val stepEntriesByDay = journalRepository.entriesOfType(EntryType.STEPS).first()
             .groupBy { Instant.ofEpochMilli(it.createdAt).atZone(zoneId).toLocalDate() }
         stepEntriesByDay.values.forEach { dayEntries ->
             dayEntries.sortedByDescending { it.createdAt }.drop(1).forEach { journalRepository.delete(it) }
         }
 
-        if (steps <= 0) return
-        val content = str(R.string.entry_steps_content, steps)
-        val existing = stepEntriesByDay[LocalDate.now(zoneId)]?.maxByOrNull { it.createdAt }
-        if (existing == null) {
-            journalRepository.insert(
-                JournalEntryEntity(
-                    title = str(R.string.entry_steps_title),
-                    content = content,
-                    entryType = EntryType.STEPS,
-                    createdAt = System.currentTimeMillis()
+        dailySteps.forEach { (day, steps) ->
+            if (steps <= 0) return@forEach
+            val content = str(R.string.entry_steps_content, steps)
+            val existing = stepEntriesByDay[day]?.maxByOrNull { it.createdAt }
+            // Bugünün kaydı "şu an"a, geçmiş günlerinki o günün sonuna yazılır (kayıt doğru güne düşsün)
+            val timestamp = if (day == today) System.currentTimeMillis()
+                else day.atTime(23, 59).atZone(zoneId).toInstant().toEpochMilli()
+            if (existing == null) {
+                journalRepository.insert(
+                    JournalEntryEntity(
+                        title = str(R.string.entry_steps_title),
+                        content = content,
+                        entryType = EntryType.STEPS,
+                        createdAt = timestamp
+                    )
                 )
-            )
-        } else if (existing.content != content) {
-            // Uygulama her açıldığında eşitlendiği için adım değişmediyse veritabanına boşuna yazılmaz
-            journalRepository.update(existing.copy(content = content, createdAt = System.currentTimeMillis()))
+            } else if (existing.content != content) {
+                // Uygulama her açıldığında eşitlendiği için adım değişmediyse veritabanına boşuna yazılmaz
+                val createdAt = if (day == today) timestamp else existing.createdAt
+                journalRepository.update(existing.copy(content = content, createdAt = createdAt))
+            }
         }
     }
 
