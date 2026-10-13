@@ -1,8 +1,9 @@
 /*
  * HealthConnectManager: Google Health Connect'ten adım ve uyku okur.
  *
- * Health Connect'in telefonda kurulu olup olmadığını ve izinleri kontrol eder; bugünkü toplam adımı
- * (readSteps) ve dün geceki uykuyu (readLastNightSleep, uyanık geçen süreler düşülerek) döndürür.
+ * Health Connect'in telefonda kurulu olup olmadığını ve izinleri kontrol eder; günlük adım toplamlarını
+ * (readDailySteps) ve dün geceki uykuyu (readLastNightSleep, uyanık geçen süreler düşülerek) döndürür.
+ * Her veri türü yalnızca kendi iznine bakar: kullanıcı sadece adıma izin verirse adımlar yine okunur.
  * Logio adımın tek kaynağı olarak bunu kullanır. Hilt'e di/HealthModule.kt üzerinden verilir.
  */
 package com.example.logio.data.health
@@ -15,12 +16,14 @@ import androidx.health.connect.client.HealthConnectClient
 import androidx.health.connect.client.permission.HealthPermission
 import androidx.health.connect.client.records.SleepSessionRecord
 import androidx.health.connect.client.records.StepsRecord
-import androidx.health.connect.client.request.AggregateRequest
+import androidx.health.connect.client.request.AggregateGroupByPeriodRequest
 import androidx.health.connect.client.request.ReadRecordsRequest
 import androidx.health.connect.client.time.TimeRangeFilter
 import kotlinx.coroutines.CancellationException
 import java.time.Duration
 import java.time.Instant
+import java.time.LocalDate
+import java.time.Period
 
 data class SleepSummary(
     val startTime: Instant,
@@ -92,14 +95,6 @@ class HealthConnectManager(private val context: Context) {
                 Timber.e(e, "Health Connect mağaza sayfası açılamadı")
             }
         }
-    }
-
-    suspend fun hasAllPermissions(): Boolean {
-        val granted = getGrantedPermissions()
-        val missing = permissions - granted
-
-
-        return missing.isEmpty()
     }
 
     suspend fun hasStepsPermission(): Boolean {
@@ -201,38 +196,42 @@ class HealthConnectManager(private val context: Context) {
         )
     }
 
-    suspend fun readSteps(
-        startTime: Instant,
-        endTime: Instant
-    ): Long {
-
-        if (!isAvailable() || !startTime.isBefore(endTime)) {
-            return 0L
-        }
+    /**
+     * [firstDay] ile [lastDay] arasındaki her gün için o günün toplam adımı (gün → adım).
+     * Bütün günler TEK istekte gelir ve izin bir kez sorulur (Health Connect'in istek sınırı var).
+     *
+     * - Toplam (aggregate) kullanılır: Samsung Health ve telefonun kendi sayacı aynı adımları saysa da
+     *   Health Connect kaynak önceliğine göre tekrarları ayıklar.
+     * - Her dilim tam gündür (00:00–24:00, telefonun saatine göre). Samsung Health günün adımlarını
+     *   tek kayıt olarak yazdığı için yarım gün sorulursa Health Connect kaydı oranlar (öğlen 8.405 → 4.555).
+     * İzin yoksa, Health Connect yoksa ya da hata olursa boş harita döner.
+     */
+    suspend fun readDailySteps(firstDay: LocalDate, lastDay: LocalDate): Map<LocalDate, Long> {
+        if (!isAvailable() || lastDay.isBefore(firstDay)) return emptyMap()
 
         if (!hasStepsPermission()) {
             Timber.w("Adım okuma izni verilmemiş.")
-            return 0L
+            return emptyMap()
         }
 
         return try {
-            val response = healthConnectClient.aggregate(
-                AggregateRequest(
+            healthConnectClient.aggregateGroupByPeriod(
+                AggregateGroupByPeriodRequest(
                     metrics = setOf(StepsRecord.COUNT_TOTAL),
                     timeRangeFilter = TimeRangeFilter.between(
-                        startTime,
-                        endTime
-                    )
+                        firstDay.atStartOfDay(),
+                        lastDay.plusDays(1).atStartOfDay()
+                    ),
+                    timeRangeSlicer = Period.ofDays(1)
                 )
-            )
-
-            response[StepsRecord.COUNT_TOTAL] ?: 0L
-
+            ).associate { slice ->
+                slice.startTime.toLocalDate() to (slice.result[StepsRecord.COUNT_TOTAL] ?: 0L)
+            }
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
             Timber.e(e, "Adım verisi okunamadı")
-            0L
+            emptyMap()
         }
     }
 }

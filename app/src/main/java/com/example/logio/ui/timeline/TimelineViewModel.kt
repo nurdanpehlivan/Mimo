@@ -559,29 +559,22 @@ class TimelineViewModel @Inject constructor(
 
     fun syncHealthData() {
         viewModelScope.launch {
+            // Adım ve uyku birbirinden bağımsız okunur: her biri yalnızca kendi iznine bakar ve izin yoksa
+            // boş döner. Kullanıcı sadece adıma izin verdiyse adımlar yine eşitlenir.
             try {
-                if (healthConnectManager.hasAllPermissions()) {
-                    val now = Instant.now()
-                    val zoneId = ZoneId.systemDefault()
-                    val today = ZonedDateTime.now(zoneId).toLocalDate()
+                val zoneId = ZoneId.systemDefault()
+                val today = ZonedDateTime.now(zoneId).toLocalDate()
 
-                    // Her gün 00:00'dan ertesi gün 00:00'a kadar okunur, "şu an"a kadar değil: Samsung Health günün
-                    // adımlarını 00:00–23:59 arası TEK bir kayıt olarak yazıyor ve aralık şu anda biterse Health Connect
-                    // bu kaydı oranlıyor (öğlen 8.405 adım → 4.555 görünüyordu).
-                    // Son 7 gün okunur: eski sürümün yazdığı eksik değerler düzelir, uygulamanın açılmadığı günler tamamlanır.
-                    val dailySteps = (0 until STEP_SYNC_DAYS).map { daysBack ->
-                        val day = today.minusDays(daysBack.toLong())
-                        day to healthConnectManager.readSteps(
-                            day.atStartOfDay(zoneId).toInstant(),
-                            day.plusDays(1).atStartOfDay(zoneId).toInstant()
-                        )
-                    }
-                    upsertDailySteps(dailySteps, today, zoneId)
+                // Son 7 gün tek istekte, her biri tam gün olarak okunur: eski sürümün yazdığı eksik değerler düzelir,
+                // uygulamanın açılmadığı günler tamamlanır (neden tam gün: HealthConnectManager.readDailySteps)
+                val dailySteps = healthConnectManager.readDailySteps(today.minusDays(STEP_SYNC_DAYS - 1L), today)
+                if (dailySteps.isNotEmpty()) upsertDailySteps(dailySteps, today, zoneId)
 
-                    healthConnectManager.readLastNightSleep(now)?.let { summary ->
-                        insertHealthSleepIfNew(summary, note = "")
-                    }
+                healthConnectManager.readLastNightSleep(Instant.now())?.let { summary ->
+                    insertHealthSleepIfNew(summary, note = "")
                 }
+            } catch (e: CancellationException) {
+                throw e
             } catch (e: Exception) {
                 Timber.e(e, "Sağlık verisi çekilirken hata oluştu")
             }
@@ -590,7 +583,7 @@ class TimelineViewModel @Inject constructor(
 
     // Adım gün boyu biriken bir toplam: gün başına tek kayıt tutulur, her eşitlemede güncellenir.
     // Eski sürümün her eşitlemede eklediği kopyalar da burada temizlenir (her gün için en son kayıt kalır).
-    private suspend fun upsertDailySteps(dailySteps: List<Pair<LocalDate, Long>>, today: LocalDate, zoneId: ZoneId) {
+    private suspend fun upsertDailySteps(dailySteps: Map<LocalDate, Long>, today: LocalDate, zoneId: ZoneId) {
         val stepEntriesByDay = journalRepository.entriesOfType(EntryType.STEPS).first()
             .groupBy { Instant.ofEpochMilli(it.createdAt).atZone(zoneId).toLocalDate() }
         stepEntriesByDay.values.forEach { dayEntries ->
