@@ -170,12 +170,23 @@ class GeminiService @Inject constructor() {
         if (isQuotaExhausted(e)) {
             throw GeminiQuotaException("Günlük ücretsiz limit doldu")
         }
+        // App Check / yetki / Firebase ayarı hatası modele bağlı değil: diğer modelleri denemek boşuna,
+        // üstelik her deneme App Check'e yeniden gider ve "Too many attempts" sınırına takılır
+        if (isConfigurationError(msg)) {
+            throw e
+        }
         if (msg.contains("503") || msg.contains("UNAVAILABLE") || msg.contains("high demand")) {
             delay(3000L)
         }
         if (msg.contains("404") || msg.contains("NOT_FOUND")) {
             Timber.w("$modelName bulunamadı, sonraki modele geçiliyor.")
         }
+    }
+
+    private fun isConfigurationError(message: String): Boolean {
+        val m = message.lowercase()
+        return "app check" in m || "permission_denied" in m || "api has not been used" in m ||
+            "service_disabled" in m || "api key" in m
     }
 
     private fun isQuotaExhausted(e: Exception): Boolean {
