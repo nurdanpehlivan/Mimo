@@ -444,4 +444,5 @@
     <string name="backup_import_done">Wiederhergestellt · Neu: %1$d, bereits vorhanden: %2$d</string>
     <string name="backup_error_password">Falsches Passwort oder keine Logio-Sicherung</string>
     <string name="backup_error">Sicherungsvorgang fehlgeschlagen</string>
+    <string name="dlg_mic_permission_needed">Für die Aufnahme wird die Mikrofonberechtigung benötigt. Du kannst sie unter Einstellungen → Apps → Logio → Berechtigungen erteilen.</string>
 </resources>

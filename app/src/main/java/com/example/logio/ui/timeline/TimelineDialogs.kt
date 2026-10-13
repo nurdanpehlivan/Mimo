@@ -423,10 +423,32 @@ fun TodoInputDialog(onDismiss: () -> Unit, onConfirm: (String, List<String>) -> 
 fun VoiceInputDialog(isRecording: Boolean, onDismiss: () -> Unit, onStartRecording: ((String) -> Unit) -> Unit, onStopRecording: () -> com.example.logio.data.audio.AudioRecordResult?, onSaveVoice: (String, Long) -> Unit) {
     var recordedPath by remember { mutableStateOf("") }
     var duration by remember { mutableLongStateOf(0L) }
+    // Kayıt başlatılamazsa (izin yok, mikrofon meşgul) sebebi pencerede gösterilir
+    var errorText by remember { mutableStateOf<String?>(null) }
+    val context = LocalContext.current
+    val permissionNeededText = stringResource(R.string.dlg_mic_permission_needed)
+    val startRecording = {
+        errorText = null
+        onStartRecording { error -> errorText = error }
+    }
+    // Mikrofon izni yoksa önce istenir; verilirse kayıt hemen başlar
+    val micPermissionLauncher = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+        if (granted) startRecording() else errorText = permissionNeededText
+    }
     LogioDialog(onDismiss, stringResource(R.string.dlg_voice), { Button(onClick = { onSaveVoice(recordedPath, duration); onDismiss() }, enabled = recordedPath.isNotEmpty(), shape = RoundedCornerShape(14.dp)) { Text(stringResource(R.string.save)) } }) {
         Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(16.dp)) {
             Text(if (isRecording) stringResource(R.string.dlg_listening) else if (recordedPath.isNotEmpty()) stringResource(R.string.dlg_recording_ready) else stringResource(R.string.dlg_press_to_record), textAlign = TextAlign.Center)
-            IconButton(onClick = { if (isRecording) onStopRecording()?.let { recordedPath = it.filePath; duration = it.durationMs } else onStartRecording {} }, modifier = Modifier.size(80.dp).background(if (isRecording) Color.Red else Color(0xFF6366F1), CircleShape)) { Icon(if (isRecording) Icons.Rounded.Stop else Icons.Rounded.Mic, null, tint = Color.White, modifier = Modifier.size(40.dp)) }
+            IconButton(
+                onClick = {
+                    when {
+                        isRecording -> onStopRecording()?.let { recordedPath = it.filePath; duration = it.durationMs }
+                        ContextCompat.checkSelfPermission(context, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED -> startRecording()
+                        else -> micPermissionLauncher.launch(Manifest.permission.RECORD_AUDIO)
+                    }
+                },
+                modifier = Modifier.size(80.dp).background(if (isRecording) Color.Red else Color(0xFF6366F1), CircleShape)
+            ) { Icon(if (isRecording) Icons.Rounded.Stop else Icons.Rounded.Mic, null, tint = Color.White, modifier = Modifier.size(40.dp)) }
+            errorText?.let { Text(it, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall, textAlign = TextAlign.Center) }
         }
     }
 }

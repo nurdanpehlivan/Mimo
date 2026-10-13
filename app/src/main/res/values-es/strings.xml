@@ -444,4 +444,5 @@
     <string name="backup_import_done">Restaurado · Nuevas: %1$d, ya existentes: %2$d</string>
     <string name="backup_error_password">Contraseña incorrecta o no es una copia de Logio</string>
     <string name="backup_error">La operación de copia falló</string>
+    <string name="dlg_mic_permission_needed">Se necesita permiso del micrófono para grabar. Puedes activarlo en Ajustes → Aplicaciones → Logio → Permisos.</string>
 </resources>

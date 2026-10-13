@@ -458,4 +458,5 @@
     <string name="backup_import_done">Geri yüklendi · Yeni: %1$d, zaten vardı: %2$d</string>
     <string name="backup_error_password">Şifre yanlış ya da dosya bir Logio yedeği değil</string>
     <string name="backup_error">Yedekleme işlemi başarısız oldu</string>
+    <string name="dlg_mic_permission_needed">Ses kaydı için mikrofon izni gerekiyor. Ayarlar → Uygulamalar → Logio → İzinler’den açabilirsin.</string>
 </resources>
