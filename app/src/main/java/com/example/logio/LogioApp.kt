@@ -14,6 +14,7 @@ import android.app.Application
 import android.content.Context
 import com.example.logio.data.premium.PremiumManager
 import com.example.logio.util.AppLocale
+import com.example.logio.util.Money
 import dagger.hilt.android.HiltAndroidApp
 import timber.log.Timber
 import javax.inject.Inject
@@ -33,5 +34,7 @@ class LogioApp : Application() {
         // Firebase, google-services eklentisi sayesinde kendiliğinden başlar; App Check ilk Gemini isteğinden önce kurulmalı
         installAppCheck()
         premiumManager.refresh()
+        // Harcama tutarlarında para birimini bulmak için SIM/şebeke ülkesine erişim
+        Money.init(this)
     }
 }
