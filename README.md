@@ -53,7 +53,7 @@ Gereksinimler: güncel Android Studio, JDK 17.
 
 1. Depoyu indir:
    ```
-   git clone https://github.com/nurdanpehlivan/Logio.git
+   git clone https://github.com/nurdanpehlivan/Mimo.git
    ```
 2. **Firebase:** Kendi Firebase projende bir Android uygulaması oluştur, `google-services.json` dosyasını indirip `app/` klasörüne koy. Yemek analizi için Firebase konsolunda **AI Logic**'i (Gemini Developer API) aç. Test sürümünde App Check, ilk açılışta Logcat'e bir debug token yazar; bu token'ı Firebase → App Check → Manage debug tokens kısmına ekle.
 3. **Google Maps:** Proje kök dizinindeki `local.properties` dosyasına bir Maps SDK for Android anahtarı ekle:
