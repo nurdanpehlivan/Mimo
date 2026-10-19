@@ -29,3 +29,6 @@ keystore.properties
 
 # Firebase yapılandırması (anahtar içerir): Firebase konsolu → Proje ayarları → Mimo → google-services.json indir, app/ klasörüne koy
 app/google-services.json
+
+# Kişisel geliştirme notları
+GELISTIRME_NOTLARI.md
