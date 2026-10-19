@@ -20,6 +20,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.AddPhotoAlternate
 import androidx.compose.material.icons.rounded.AutoAwesome
+import androidx.compose.material.icons.rounded.Lock
 import androidx.compose.material.icons.rounded.TouchApp
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -64,6 +65,9 @@ private enum class JourneyMode(@StringRes val label: Int) {
     MANUAL(R.string.journey_mode_manual)
 }
 
+/** Ücretsiz sürümde yalnızca haftalık özet açıktır; diğer şablonlar ve "Kendim seçeyim" Mimo Premium ister. */
+private val JourneyTemplate.isFree: Boolean get() = this == JourneyTemplate.WEEKLY_SUMMARY
+
 /** Seçilebilir fotoğraf: Logio'daki bir dosya ya da galeriden seçilen bir içerik adresi. */
 private data class PhotoSource(val key: String, val model: Any, val createdAt: Long)
 
@@ -71,6 +75,7 @@ private data class PhotoSource(val key: String, val model: Any, val createdAt: L
  * Yolculuk videosu tam ekran sayfası. İki yol:
  * - Otomatik: şablon seç, tarih aralığı ve müzik şablondan gelir.
  * - Kendim seçeyim: Logio'daki fotoğraflardan ve/veya galeriden istediklerini, istediğin sırayla seç.
+ * Premium yoksa kilitli seçeneğe dokununca [onPremiumRequired] çağrılır (Premium penceresi açılır).
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -78,7 +83,9 @@ fun JourneyVideoDialog(
     entries: List<JournalEntryEntity>,
     onDismiss: () -> Unit,
     onGenerate: (title: String, startDate: Long, endDate: Long, theme: String) -> Unit,
-    onGenerateFromPhotos: (title: String, photos: List<String>, theme: String) -> Unit
+    onGenerateFromPhotos: (title: String, photos: List<String>, theme: String) -> Unit,
+    isPremium: Boolean,
+    onPremiumRequired: () -> Unit
 ) {
     var mode by remember { mutableStateOf(JourneyMode.AUTO) }
     var selectedTemplate by remember { mutableStateOf(JourneyTemplate.WEEKLY_SUMMARY) }
@@ -189,18 +196,24 @@ fun JourneyVideoDialog(
                         .padding(innerPadding)
                 ) {
                     fullWidth("mode") {
-                        ModeSelector(selected = mode, onSelect = { mode = it })
+                        ModeSelector(
+                            selected = mode,
+                            manualLocked = !isPremium,
+                            onSelect = { if (it == JourneyMode.MANUAL && !isPremium) onPremiumRequired() else mode = it }
+                        )
                     }
 
                     when (mode) {
                         JourneyMode.AUTO -> {
                             JourneyTemplate.entries.forEach { template ->
                                 fullWidth("template-${template.name}") {
+                                    val locked = !isPremium && !template.isFree
                                     TemplateCard(
                                         template = template,
                                         photoCount = photoCountByTemplate[template] ?: 0,
                                         selected = template == selectedTemplate,
-                                        onSelect = { selectedTemplate = template }
+                                        locked = locked,
+                                        onSelect = { if (locked) onPremiumRequired() else selectedTemplate = template }
                                     )
                                 }
                             }
@@ -276,7 +289,7 @@ private fun androidx.compose.foundation.lazy.grid.LazyGridScope.fullWidth(
 }
 
 @Composable
-private fun ModeSelector(selected: JourneyMode, onSelect: (JourneyMode) -> Unit) {
+private fun ModeSelector(selected: JourneyMode, manualLocked: Boolean, onSelect: (JourneyMode) -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -303,7 +316,11 @@ private fun ModeSelector(selected: JourneyMode, onSelect: (JourneyMode) -> Unit)
                     .padding(vertical = 10.dp)
             ) {
                 Icon(
-                    imageVector = if (option == JourneyMode.AUTO) Icons.Rounded.AutoAwesome else Icons.Rounded.TouchApp,
+                    imageVector = when {
+                        option == JourneyMode.AUTO -> Icons.Rounded.AutoAwesome
+                        manualLocked -> Icons.Rounded.Lock
+                        else -> Icons.Rounded.TouchApp
+                    },
                     contentDescription = null,
                     tint = if (isSelected) MimoPurple else MutedText,
                     modifier = Modifier.size(18.dp)
@@ -325,6 +342,7 @@ private fun TemplateCard(
     template: JourneyTemplate,
     photoCount: Int,
     selected: Boolean,
+    locked: Boolean,
     onSelect: () -> Unit
 ) {
     val background by animateColorAsState(if (selected) Color(0xFFF4EEFF) else Color.White, label = "templateBg")
@@ -362,12 +380,31 @@ private fun TemplateCard(
                     color = if (photoCount > 0) MimoPurple else MutedText
                 )
             }
-            RadioButton(
-                selected = selected,
-                onClick = onSelect,
-                colors = RadioButtonDefaults.colors(selectedColor = MimoPurple)
-            )
+            if (locked) {
+                PremiumChip()
+            } else {
+                RadioButton(
+                    selected = selected,
+                    onClick = onSelect,
+                    colors = RadioButtonDefaults.colors(selectedColor = MimoPurple)
+                )
+            }
         }
+    }
+}
+
+@Composable
+private fun PremiumChip() {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .clip(RoundedCornerShape(50))
+            .background(MimoPurple.copy(alpha = 0.12f))
+            .padding(horizontal = 10.dp, vertical = 5.dp)
+    ) {
+        Icon(Icons.Rounded.Lock, contentDescription = null, tint = MimoPurple, modifier = Modifier.size(14.dp))
+        Spacer(modifier = Modifier.width(4.dp))
+        Text(stringResource(R.string.premium_badge), style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Bold, color = MimoPurple)
     }
 }
 

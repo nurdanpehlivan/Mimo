@@ -4,7 +4,8 @@
  * Görevleri:
  *  - Kayıtları JournalRepository'den okuyup ekrana vermek (entries)
  *  - "+" menüsündeki pencerelerden gelen kayıtları oluşturmak (not, kahve, su, uyku, harcama, film...)
- *  - Yemek fotoğrafını Gemini ile analiz etmek; sesli not kaydetmek, çalmak, yazıya çevirmek
+ *  - Yemek fotoğrafını Gemini ile analiz etmek (premium yoksa günde MealAnalysisQuota.FREE_DAILY_LIMIT kez);
+ *    sesli not kaydetmek, çalmak, yazıya çevirmek
  *  - Health Connect'ten adım ve uyku eşitlemek (adımın tek kaynağı Health Connect'tir), Journey videosu üretmek
  * Aramalar SearchViewModel'de, istatistik AnalysisViewModel'de, takvim CalendarViewModel'de,
  * profil ProfileViewModel'dedir.
@@ -27,6 +28,8 @@ import com.example.logio.data.local.EntryType
 import com.example.logio.data.local.JournalEntryEntity
 import com.example.logio.data.profile.ProfileRepository
 import com.example.logio.data.profile.UserProfile
+import com.example.logio.data.premium.MealAnalysisQuota
+import com.example.logio.data.premium.PremiumManager
 import com.example.logio.data.remote.GeminiQuotaException
 import com.example.logio.data.remote.GeminiService
 import com.example.logio.data.remote.LinkPreviewFetcher
@@ -86,13 +89,20 @@ class TimelineViewModel @Inject constructor(
     private val audioPlayerManager: AudioPlayerManager,
     val healthConnectManager: HealthConnectManager,
     profileRepository: ProfileRepository,
-    private val linkPreviewFetcher: LinkPreviewFetcher
+    private val linkPreviewFetcher: LinkPreviewFetcher,
+    premiumManager: PremiumManager,
+    private val mealAnalysisQuota: MealAnalysisQuota
 ) : ViewModel() {
 
     val entries: StateFlow<List<JournalEntryEntity>> = journalRepository.entries
         .stateIn(scope = viewModelScope, started = SharingStarted.WhileSubscribed(5000), initialValue = emptyList())
 
     val profile: StateFlow<UserProfile> = profileRepository.profile
+
+    val isPremium: StateFlow<Boolean> = premiumManager.isPremium
+
+    /** Öğün analizi yapılabilir mi: premium'da her zaman, ücretsizde günlük hak bitene kadar. */
+    fun canAnalyzeMeal(): Boolean = isPremium.value || mealAnalysisQuota.remainingToday() > 0
 
     init {
         backfillLinkPreviews()
@@ -352,6 +362,8 @@ class TimelineViewModel @Inject constructor(
     }
 
     fun analyzeAndSaveMeal(context: Context, imageUri: Uri) {
+        // Ekran hakkı fotoğraf seçtirmeden önce kontrol eder; bu yalnızca ikinci bir güvence
+        if (!canAnalyzeMeal()) return
         viewModelScope.launch {
             _isAnalyzing.value = true
             _analysisError.value = null
@@ -396,6 +408,7 @@ class TimelineViewModel @Inject constructor(
                     )
                 )
 
+                if (!isPremium.value) mealAnalysisQuota.recordUse()
                 Timber.d("Yemek analizi kaydedildi")
 
             } catch (e: Exception) {

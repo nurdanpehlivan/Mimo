@@ -445,4 +445,31 @@
     <string name="backup_error_password">Contraseña incorrecta o no es una copia de Mimo</string>
     <string name="backup_error">La operación de copia falló</string>
     <string name="dlg_mic_permission_needed">Se necesita permiso del micrófono para grabar. Puedes activarlo en Ajustes → Aplicaciones → Mimo → Permisos.</string>
+
+    <!-- Mimo Premium -->
+    <string name="premium_title">Mimo Premium</string>
+    <string name="premium_subtitle">Pagas una vez, tuyo para siempre</string>
+    <string name="premium_reason_journey">Esta opción es parte de Mimo Premium</string>
+    <string name="premium_reason_meal">Ya usaste tus %1$d análisis de comida gratis de hoy. Se renuevan mañana, o hazlos ilimitados con Premium.</string>
+    <string name="premium_benefit_journey">Todos los videos Journey</string>
+    <string name="premium_benefit_journey_desc">Todas las plantillas y músicas, y videos con las fotos que elijas</string>
+    <string name="premium_benefit_meal">Análisis de comidas ilimitado</string>
+    <string name="premium_benefit_meal_desc">Versión gratuita: %1$d análisis al día</string>
+    <string name="premium_benefit_once">Sin suscripción</string>
+    <string name="premium_benefit_once_desc">Pagas una vez; vuelve con tu cuenta de Google en un teléfono nuevo</string>
+    <string name="premium_buy">Desbloquear Premium</string>
+    <string name="premium_buy_price">Desbloquear Premium · %1$s</string>
+    <string name="premium_restore">Restaurar compra</string>
+    <string name="premium_later">Quizás después</string>
+    <string name="premium_badge">Premium</string>
+    <string name="premium_settings_title">Obtener Mimo Premium</string>
+    <string name="premium_settings_desc">Todos los videos Journey y análisis de comidas ilimitado</string>
+    <string name="premium_active_title">Mimo Premium está activo ✨</string>
+    <string name="premium_active_desc">Todo está desbloqueado. ¡Gracias por tu apoyo!</string>
+    <string name="premium_msg_purchased">¡Mimo Premium desbloqueado, gracias! 💜</string>
+    <string name="premium_msg_restored">Mimo Premium restaurado</string>
+    <string name="premium_msg_pending">Tu pago está pendiente; Premium se activará cuando se confirme</string>
+    <string name="premium_msg_failed">No se pudo completar la compra. Inténtalo de nuevo.</string>
+    <string name="premium_msg_unavailable">No se pudo conectar con Google Play. Revisa tu conexión e inténtalo de nuevo.</string>
+    <string name="premium_msg_nothing_to_restore">No se encontró ninguna compra de Mimo Premium en esta cuenta de Google</string>
 </resources>

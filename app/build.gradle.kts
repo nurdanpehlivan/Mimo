@@ -111,6 +111,9 @@ dependencies {
     implementation("androidx.media3:media3-effect:1.11.1")
     implementation("androidx.media3:media3-common:1.11.1")
 
+    // Google Play Faturalandırma: Mimo Premium (tek seferlik satın alma)
+    implementation("com.android.billingclient:billing-ktx:9.1.0")
+
     // Health Connect
     implementation("androidx.health.connect:connect-client:1.1.0")
 

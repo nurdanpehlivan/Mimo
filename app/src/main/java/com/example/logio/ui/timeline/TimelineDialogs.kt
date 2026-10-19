@@ -185,7 +185,9 @@ fun QuickActionDialogHost(
     currentDayWaterTotal: Int,
     onGenerateJourney: (title: String, startDate: Long, endDate: Long, theme: String) -> Unit = { _, _, _, _ -> },
     journeyEntries: List<JournalEntryEntity> = emptyList(),
-    onGenerateJourneyFromPhotos: (title: String, photos: List<String>, theme: String) -> Unit = { _, _, _ -> }
+    onGenerateJourneyFromPhotos: (title: String, photos: List<String>, theme: String) -> Unit = { _, _, _ -> },
+    isPremium: Boolean = false,
+    onPremiumRequired: () -> Unit = {}
 ) {
     when (activeDialogAction) {
         DialogQuickAction.LOG -> LogInputDialog(onDismiss, onAddNote)
@@ -215,7 +217,9 @@ fun QuickActionDialogHost(
                 onGenerateFromPhotos = { title, photos, theme ->
                     onGenerateJourneyFromPhotos(title, photos, theme)
                     onDismiss()
-                }
+                },
+                isPremium = isPremium,
+                onPremiumRequired = onPremiumRequired
             )
         }
         null -> Unit

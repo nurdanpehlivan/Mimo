@@ -55,6 +55,8 @@ import com.example.logio.ui.theme.MimoPurple
 import com.example.logio.ui.theme.logioFieldColors
 import com.example.logio.util.EntryLauncher
 import kotlinx.coroutines.launch
+import com.example.logio.ui.premium.PremiumDialog
+import com.example.logio.ui.premium.PremiumReason
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -75,6 +77,9 @@ fun TimelineScreen(
     val transcribingEntryIds by viewModel.transcribingEntryIds.collectAsState()
     val analysisError by viewModel.analysisError.collectAsState()
     val healthSleepState by viewModel.healthSleepState.collectAsState()
+    val isPremium by viewModel.isPremium.collectAsState()
+    // Premium penceresi: kilitli Journey seçeneği ya da biten öğün analizi hakkı açar
+    var premiumReason by remember { mutableStateOf<PremiumReason?>(null) }
 
     // Film / kitap / müzik / konum arama pencereleri SearchViewModel'den beslenir
     val movieSearchResults by searchViewModel.movieSearchResults.collectAsState()
@@ -512,7 +517,11 @@ fun TimelineScreen(
                                     photoPickerLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
                                 }
                                 QuickLogAction.MEAL -> {
-                                    mealPickerLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+                                    if (viewModel.canAnalyzeMeal()) {
+                                        mealPickerLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+                                    } else {
+                                        premiumReason = PremiumReason.MEAL_LIMIT
+                                    }
                                 }
                                 else -> Unit
                             }
@@ -587,8 +596,14 @@ fun TimelineScreen(
                 journeyEntries = entries,
                 onGenerateJourneyFromPhotos = { title, photos, theme ->
                     viewModel.createJourneyVideoFromPhotos(title, photos, theme)
-                }
+                },
+                isPremium = isPremium,
+                onPremiumRequired = { premiumReason = PremiumReason.JOURNEY }
             )
+
+            premiumReason?.let { reason ->
+                PremiumDialog(reason = reason, onDismiss = { premiumReason = null })
+            }
         }
     }
 }

@@ -5,6 +5,7 @@
  * Profil özetini (seri, rozetler, en çok kullanılan türler) arka planda hesaplar (ProfileStats.kt).
  * "Geçmişten bir anı" kartındaki kayıt için silme ve yapılacak işaretleme de buradan yapılır.
  * Ayarlardaki "Yedeği dışa aktar / Yedekten geri yükle" işlemleri BackupManager üzerinden yürütülür.
+ * Premium durumu PremiumManager'dan gelir (satın alma penceresi PremiumDialog'dadır).
  */
 package com.example.logio.ui.profile
 
@@ -18,6 +19,7 @@ import com.example.logio.data.journal.JournalRepository
 import com.example.logio.data.local.JournalEntryEntity
 import com.example.logio.data.profile.ProfileRepository
 import com.example.logio.data.profile.UserProfile
+import com.example.logio.data.premium.PremiumManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
@@ -50,8 +52,11 @@ sealed interface BackupStatus {
 class ProfileViewModel @Inject constructor(
     private val journalRepository: JournalRepository,
     private val profileRepository: ProfileRepository,
-    private val backupManager: BackupManager
+    private val backupManager: BackupManager,
+    premiumManager: PremiumManager
 ) : ViewModel() {
+
+    val isPremium: StateFlow<Boolean> = premiumManager.isPremium
 
     private val _backupStatus = MutableStateFlow<BackupStatus>(BackupStatus.Idle)
     val backupStatus: StateFlow<BackupStatus> = _backupStatus.asStateFlow()

@@ -2,7 +2,7 @@
  * ProfileScreen: Profil sekmesinin arayüzü.
  *
  * Başlık kartı (isim, seri), istatistik ızgarası, rozetler, en çok kullanılan türler,
- * "Geçmişten bir anı" kartı ve ayarlar (dil, uygulama kilidi, yedeği dışa / içe aktarma) burada çizilir.
+ * "Geçmişten bir anı" kartı ve ayarlar (Mimo Premium, dil, uygulama kilidi, yedeği dışa / içe aktarma) burada çizilir.
  * Hesaplar ProfileViewModel'de (ProfileStats.kt) yapılır; bu dosya yalnızca gösterir.
  */
 package com.example.logio.ui.profile
@@ -58,6 +58,9 @@ import android.widget.Toast
 import androidx.compose.material.icons.rounded.Lock
 import androidx.compose.material.icons.rounded.Download
 import androidx.compose.material.icons.rounded.Upload
+import androidx.compose.material.icons.rounded.WorkspacePremium
+import com.example.logio.ui.premium.PremiumDialog
+import com.example.logio.ui.premium.PremiumReason
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -124,6 +127,8 @@ fun ProfileScreen(
     val language = remember { AppLocale.current(context) }
     var showLanguageDialog by remember { mutableStateOf(false) }
     var lockEnabled by remember { mutableStateOf(AppLock.isEnabled(context)) }
+    val isPremium by viewModel.isPremium.collectAsState()
+    var showPremiumDialog by remember { mutableStateOf(false) }
 
     // Yedekleme: önce dosya seçilir (nereye kaydedilecek / hangisi yüklenecek), sonra şifre sorulur
     val backupStatus by viewModel.backupStatus.collectAsState()
@@ -207,6 +212,17 @@ fun ProfileScreen(
                 Spacer(modifier = Modifier.height(20.dp))
 
                 SectionTitle(stringResource(R.string.profile_settings), stringResource(R.string.profile_settings_desc))
+                if (isPremium) {
+                    PremiumActiveRow()
+                } else {
+                    SettingsActionRow(
+                        icon = Icons.Rounded.WorkspacePremium,
+                        title = stringResource(R.string.premium_settings_title),
+                        description = stringResource(R.string.premium_settings_desc),
+                        onClick = { showPremiumDialog = true }
+                    )
+                }
+                Spacer(modifier = Modifier.height(10.dp))
                 LanguageRow(current = language, onClick = { showLanguageDialog = true })
                 Spacer(modifier = Modifier.height(10.dp))
                 AppLockRow(
@@ -266,6 +282,10 @@ fun ProfileScreen(
                 showEditDialog = false
             }
         )
+    }
+
+    if (showPremiumDialog) {
+        PremiumDialog(reason = PremiumReason.GENERAL, onDismiss = { showPremiumDialog = false })
     }
 
     if (showLanguageDialog) {
@@ -968,6 +988,28 @@ private fun SettingsActionRow(icon: ImageVector, title: String, description: Str
                 Text(description, style = MaterialTheme.typography.labelSmall, color = InkSecondary)
             }
             Icon(Icons.Rounded.ChevronRight, contentDescription = null, tint = InkMuted)
+        }
+    }
+}
+
+@Composable
+private fun PremiumActiveRow() {
+    WhiteCard {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier
+                    .size(32.dp)
+                    .clip(RoundedCornerShape(10.dp))
+                    .background(MimoCloud)
+            ) {
+                Icon(Icons.Rounded.WorkspacePremium, contentDescription = null, tint = MimoPurple, modifier = Modifier.size(18.dp))
+            }
+            Spacer(modifier = Modifier.width(10.dp))
+            Column(modifier = Modifier.weight(1f)) {
+                Text(stringResource(R.string.premium_active_title), style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.SemiBold, color = InkPrimary)
+                Text(stringResource(R.string.premium_active_desc), style = MaterialTheme.typography.labelSmall, color = InkSecondary)
+            }
         }
     }
 }

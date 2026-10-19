@@ -459,4 +459,31 @@
     <string name="backup_error_password">Şifre yanlış ya da dosya bir Mimo yedeği değil</string>
     <string name="backup_error">Yedekleme işlemi başarısız oldu</string>
     <string name="dlg_mic_permission_needed">Ses kaydı için mikrofon izni gerekiyor. Ayarlar → Uygulamalar → Mimo → İzinler’den açabilirsin.</string>
+
+    <!-- Mimo Premium -->
+    <string name="premium_title">Mimo Premium</string>
+    <string name="premium_subtitle">Tek seferlik ödeme, ömür boyu senin</string>
+    <string name="premium_reason_journey">Bu seçenek Mimo Premium’a dahil</string>
+    <string name="premium_reason_meal">Bugünkü %1$d ücretsiz öğün analizi hakkın doldu. Yarın yenilenir ya da Premium ile sınırsız kullanabilirsin.</string>
+    <string name="premium_benefit_journey">Tüm Journey videoları</string>
+    <string name="premium_benefit_journey_desc">Bütün şablonlar ve müzikler, fotoğrafları kendin seçerek video</string>
+    <string name="premium_benefit_meal">Sınırsız öğün analizi</string>
+    <string name="premium_benefit_meal_desc">Ücretsiz sürümde günde %1$d analiz</string>
+    <string name="premium_benefit_once">Abonelik yok</string>
+    <string name="premium_benefit_once_desc">Bir kez öde; telefon değiştirsen de Google hesabınla geri gelir</string>
+    <string name="premium_buy">Premium’u aç</string>
+    <string name="premium_buy_price">Premium’u aç · %1$s</string>
+    <string name="premium_restore">Satın alımı geri yükle</string>
+    <string name="premium_later">Belki sonra</string>
+    <string name="premium_badge">Premium</string>
+    <string name="premium_settings_title">Mimo Premium’a geç</string>
+    <string name="premium_settings_desc">Tüm Journey videoları ve sınırsız öğün analizi</string>
+    <string name="premium_active_title">Mimo Premium açık ✨</string>
+    <string name="premium_active_desc">Tüm özellikler senin. Desteğin için teşekkürler!</string>
+    <string name="premium_msg_purchased">Mimo Premium açıldı, teşekkürler! 💜</string>
+    <string name="premium_msg_restored">Mimo Premium geri yüklendi</string>
+    <string name="premium_msg_pending">Ödemen bekleniyor; onaylanınca Premium kendiliğinden açılır</string>
+    <string name="premium_msg_failed">Satın alma tamamlanamadı. Lütfen tekrar dene.</string>
+    <string name="premium_msg_unavailable">Google Play’e şu an bağlanılamadı. İnternetini kontrol edip tekrar dene.</string>
+    <string name="premium_msg_nothing_to_restore">Bu Google hesabında Mimo Premium satın alımı bulunamadı</string>
 </resources>
