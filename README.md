@@ -85,3 +85,7 @@ app/schemas/                           Veritabanı şema geçmişi
 ```
 
 Kod içindeki `logio` adları uygulamanın eski adından kalmadır.
+
+## Lisans
+
+Tüm hakları saklıdır. Kod yalnızca incelenmek üzere paylaşılmıştır; izinsiz kopyalanamaz, değiştirilip yayımlanamaz. Ayrıntılar: [LICENSE](LICENSE)
