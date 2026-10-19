@@ -285,7 +285,7 @@
     <string name="dlg_sleep_range">0 ile %d saat arası gir (örn. 7,5)</string>
     <string name="dlg_sleep_example">Örn. 7,5</string>
     <string name="dlg_add_expense">Harcama Ekle</string>
-    <string name="dlg_amount_currency">Miktar (₺)</string>
+    <string name="dlg_amount_currency">Tutar</string>
     <string name="dlg_coffee">Kahve Keyfi</string>
     <string name="dlg_cup_count">Fincan Sayısı</string>
     <string name="dlg_alcohol">Alkol Tüketimi</string>
@@ -486,4 +486,10 @@
     <string name="premium_msg_failed">Satın alma tamamlanamadı. Lütfen tekrar dene.</string>
     <string name="premium_msg_unavailable">Google Play’e şu an bağlanılamadı. İnternetini kontrol edip tekrar dene.</string>
     <string name="premium_msg_nothing_to_restore">Bu Google hesabında Mimo Premium satın alımı bulunamadı</string>
+    <!-- Ad girilmemişken selamlama ve profil başlığı -->
+    <string name="greeting_morning_plain">Günaydın</string>
+    <string name="greeting_day_plain">İyi günler</string>
+    <string name="greeting_evening_plain">İyi akşamlar</string>
+    <string name="greeting_night_plain">İyi geceler</string>
+    <string name="profile_add_name">Adını ekle</string>
 </resources>

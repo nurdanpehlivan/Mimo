@@ -15,7 +15,8 @@ data class UserProfile(
     val isAppLockEnabled: Boolean = false
 ) {
     companion object {
-        const val DEFAULT_NAME = "Nurdan"
+        // Ad girilmemişse boş: selamlama adsız gösterilir ("Günaydın"), profil başlığında "Adını ekle" yazar
+        const val DEFAULT_NAME = ""
         const val DEFAULT_WATER_GOAL_ML = 2_000
         const val DEFAULT_STEP_GOAL = 10_000
     }
@@ -40,7 +41,7 @@ class ProfileRepository @Inject constructor(
 
     fun update(profile: UserProfile) {
         val cleaned = profile.copy(
-            name = profile.name.trim().ifBlank { UserProfile.DEFAULT_NAME },
+            name = profile.name.trim(),
             waterGoalMl = profile.waterGoalMl.coerceIn(500, 6_000),
             stepGoal = profile.stepGoal.coerceIn(1_000, 50_000)
         )

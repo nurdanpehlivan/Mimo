@@ -56,13 +56,14 @@ private val RailWidth = 28.dp
 private val RailColor = MimoLavender.copy(alpha = 0.55f)
 
 @StringRes
-internal fun greetingForNow(): Int {
+/** Saate göre selamlama. [withName] ise yazıda ad için yer var ("Günaydın, %s"), değilse yalnızca "Günaydın". */
+internal fun greetingForNow(withName: Boolean): Int {
     val hour = java.util.Calendar.getInstance().get(java.util.Calendar.HOUR_OF_DAY)
     return when (hour) {
-        in 5..11 -> R.string.greeting_morning
-        in 12..17 -> R.string.greeting_day
-        in 18..22 -> R.string.greeting_evening
-        else -> R.string.greeting_night
+        in 5..11 -> if (withName) R.string.greeting_morning else R.string.greeting_morning_plain
+        in 12..17 -> if (withName) R.string.greeting_day else R.string.greeting_day_plain
+        in 18..22 -> if (withName) R.string.greeting_evening else R.string.greeting_evening_plain
+        else -> if (withName) R.string.greeting_night else R.string.greeting_night_plain
     }
 }
 

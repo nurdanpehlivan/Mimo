@@ -182,7 +182,8 @@ fun TimelineScreen(
     val listState = rememberLazyListState()
 
     val streakDays = remember(entries) { calculateStreak(entries, dateKeyFormat) }
-    val greeting = stringResource(greetingForNow(), profile.name)
+    val greeting = if (profile.name.isBlank()) stringResource(greetingForNow(withName = false))
+        else stringResource(greetingForNow(withName = true), profile.name)
     // Son 36 saatteki en güncel uyku kaydı (Health Connect ya da manuel)
     val latestSleepHours = remember(entries) {
         val since = System.currentTimeMillis() - 36L * 60 * 60 * 1000

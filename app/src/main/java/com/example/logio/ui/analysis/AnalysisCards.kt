@@ -47,6 +47,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.logio.R
 import com.example.logio.ui.theme.MimoPurple
+import com.example.logio.util.Money
 
 private const val SLEEP_BAR_MAX_HOURS = 10.0
 
@@ -462,8 +463,8 @@ internal fun AlcoholMetricCard(stats: PeriodStats, modifier: Modifier) {
 
 @Composable
 internal fun ExpenseCard(stats: PeriodStats) {
-    val money = remember { java.text.NumberFormat.getNumberInstance(TrLocale).apply { maximumFractionDigits = 0 } }
-    fun lira(value: Double) = "₺${money.format(value)}"
+    // Telefonun bölgesinin para birimiyle, kuruşsuz (ör. "₺1.250", "1.250 €")
+    fun money(value: Double) = Money.format(value, wholeOnly = true)
 
     Surface(
         shape = RoundedCornerShape(20.dp),
@@ -488,9 +489,9 @@ internal fun ExpenseCard(stats: PeriodStats) {
                         Text(stringResource(R.string.action_expense), style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.SemiBold, color = InkSecondary)
                     }
                     Spacer(modifier = Modifier.height(10.dp))
-                    Text(lira(stats.expenseTotal), style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold, color = InkPrimary)
+                    Text(money(stats.expenseTotal), style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold, color = InkPrimary)
                     Text(
-                        text = stringResource(R.string.stats_expense_daily, lira(stats.expenseDailyAverage)),
+                        text = stringResource(R.string.stats_expense_daily, money(stats.expenseDailyAverage)),
                         style = MaterialTheme.typography.labelMedium,
                         color = InkMuted
                     )
@@ -514,7 +515,7 @@ internal fun ExpenseCard(stats: PeriodStats) {
                         .fillMaxWidth()
                         .height(10.dp)
                         .semantics {
-                            contentDescription = stats.expenseByCategory.joinToString { (c, a) -> "${c.name} ${lira(a)}" }
+                            contentDescription = stats.expenseByCategory.joinToString { (c, a) -> "${c.name} ${money(a)}" }
                         }
                 ) {
                     val gap = 2.dp.toPx()
@@ -538,7 +539,7 @@ internal fun ExpenseCard(stats: PeriodStats) {
                             modifier = Modifier.weight(1f)
                         )
                         Text(
-                            text = "${lira(amount)} · ${stringResource(R.string.percent_value, (amount / total * 100).toInt())}",
+                            text = "${money(amount)} · ${stringResource(R.string.percent_value, (amount / total * 100).toInt())}",
                             style = MaterialTheme.typography.labelMedium,
                             color = InkSecondary
                         )

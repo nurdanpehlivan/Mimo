@@ -13,6 +13,7 @@ import androidx.compose.ui.res.stringResource
 import com.example.logio.R
 import com.example.logio.data.local.EntryType
 import com.example.logio.data.local.JournalEntryEntity
+import com.example.logio.util.Money
 import java.util.*
 
 /**
@@ -77,11 +78,5 @@ fun displayEntryContent(entry: JournalEntryEntity): String? {
     return content
 }
 
-fun formatExpenseAmountLabel(amount: Double?): String? {
-    if (amount == null) return null
-    return if (amount % 1.0 == 0.0) {
-        "₺${amount.toInt()}"
-    } else {
-        "₺${"%.2f".format(amount)}"
-    }
-}
+/** Harcama çipindeki tutar, telefonun bölgesinin para birimiyle ("₺250", "250 €", "$12.50"). */
+fun formatExpenseAmountLabel(amount: Double?): String? = amount?.let { Money.format(it) }

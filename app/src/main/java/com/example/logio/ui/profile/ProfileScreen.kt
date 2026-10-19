@@ -379,10 +379,11 @@ private fun ProfileHeaderCard(
             Spacer(modifier = Modifier.width(14.dp))
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = name,
+                    // Ad girilmemişse kaleme dokunup eklemesi için ipucu gösterilir
+                    text = name.ifBlank { stringResource(R.string.profile_add_name) },
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold,
-                    color = InkPrimary,
+                    color = if (name.isBlank()) InkMuted else InkPrimary,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )

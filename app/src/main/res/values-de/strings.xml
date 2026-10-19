@@ -274,7 +274,7 @@
     <string name="dlg_sleep_range">Zwischen 0 und %d Stunden eingeben (z. B. 7,5)</string>
     <string name="dlg_sleep_example">z. B. 7,5</string>
     <string name="dlg_add_expense">Ausgabe hinzufügen</string>
-    <string name="dlg_amount_currency">Betrag (₺)</string>
+    <string name="dlg_amount_currency">Betrag</string>
     <string name="dlg_coffee">Kaffeegenuss</string>
     <string name="dlg_cup_count">Anzahl der Tassen</string>
     <string name="dlg_alcohol">Alkoholkonsum</string>
@@ -472,4 +472,10 @@
     <string name="premium_msg_failed">Der Kauf konnte nicht abgeschlossen werden. Bitte versuche es erneut.</string>
     <string name="premium_msg_unavailable">Google Play ist gerade nicht erreichbar. Prüfe deine Verbindung und versuche es erneut.</string>
     <string name="premium_msg_nothing_to_restore">Für dieses Google-Konto wurde kein Mimo-Premium-Kauf gefunden</string>
+    <!-- Ad girilmemişken selamlama ve profil başlığı -->
+    <string name="greeting_morning_plain">Guten Morgen</string>
+    <string name="greeting_day_plain">Guten Tag</string>
+    <string name="greeting_evening_plain">Guten Abend</string>
+    <string name="greeting_night_plain">Gute Nacht</string>
+    <string name="profile_add_name">Namen hinzufügen</string>
 </resources>

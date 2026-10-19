@@ -27,6 +27,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.logio.R
 import com.example.logio.ui.theme.MimoNavy
+import com.example.logio.ui.theme.MimoNavyMuted
+import com.example.logio.util.Money
 import com.example.logio.ui.theme.MimoPurple
 
 private val HintText = Color(0xFF8A90B4)
@@ -41,6 +43,7 @@ fun ExpenseInputDialog(onDismiss: () -> Unit, onConfirm: (String, Double, String
     var category by remember { mutableStateOf(ExpenseCategory.FOOD) }
     var note by remember { mutableStateOf("") }
     val amount = amountText.replace(',', '.').toDoubleOrNull()?.takeIf { it > 0 }
+    val currencySymbol = remember { Money.symbol() }
 
     LogioDialog(
         onDismiss = onDismiss,
@@ -60,6 +63,10 @@ fun ExpenseInputDialog(onDismiss: () -> Unit, onConfirm: (String, Double, String
                 value = amountText,
                 onValueChange = { amountText = it.filter { c -> c.isDigit() || c == ',' || c == '.' }.take(10) },
                 label = { Text(stringResource(R.string.dlg_amount_currency)) },
+                // Telefonun bölgesinin para birimi (₺, €, $); bölge bilinmiyorsa gösterilmez
+                prefix = if (currencySymbol.isNotBlank()) {
+                    { Text(currencySymbol, style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold, color = MimoNavyMuted) }
+                } else null,
                 singleLine = true,
                 textStyle = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold, color = MimoNavy),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
