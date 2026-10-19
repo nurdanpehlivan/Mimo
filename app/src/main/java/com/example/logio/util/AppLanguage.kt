@@ -8,7 +8,7 @@ import android.os.Build
 import android.os.LocaleList
 import java.util.Locale
 
-/** Uygulama dilleri. SYSTEM: telefonun dilini izler (desteklenmiyorsa Türkçe kaynaklar kullanılır). */
+/** Uygulama dilleri. SYSTEM: telefonun dilini izler (desteklenmiyorsa İngilizce kaynaklar kullanılır: res/values). */
 enum class AppLanguage(val tag: String, val nativeName: String) {
     SYSTEM("", ""),
     TURKISH("tr", "Türkçe"),
