@@ -21,3 +21,11 @@ keystore.properties
 
 # İmzalı APK/AAB çıktıları
 /app/release/
+
+# Bilgisayara özel dosyalar (derleyici hata kayıtları, bağlı telefon bilgisi)
+.kotlin
+/.idea/deploymentTargetSelector.xml
+/.idea/deviceManager.xml
+
+# Firebase yapılandırması (anahtar içerir): Firebase konsolu → Proje ayarları → Mimo → google-services.json indir, app/ klasörüne koy
+app/google-services.json

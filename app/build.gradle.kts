@@ -14,8 +14,7 @@ android {
 
     defaultConfig {
         // Play Store'daki kalıcı kimlik; yayınlandıktan sonra değiştirilemez.
-        // Koddaki paket adı (namespace = com.example.logio) ayrı bir şeydir ve kullanıcıya görünmez.
-        applicationId = "com.nurdanpehlivan.logio"
+        applicationId = "com.nurdanpehlivan.mimo"
         minSdk = 26
         targetSdk = 36
         versionCode = 9
@@ -53,14 +52,15 @@ android {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
-    kotlin {
-        compilerOptions {
-            jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
-        }
-    }
     buildFeatures {
         compose = true
         buildConfig = true
+    }
+}
+
+kotlin {
+    compilerOptions {
+        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
     }
 }
 

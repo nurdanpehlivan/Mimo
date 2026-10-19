@@ -235,7 +235,7 @@ fun ProfileScreen(
                     icon = Icons.Rounded.Upload,
                     title = stringResource(R.string.settings_backup_export),
                     description = stringResource(R.string.settings_backup_export_desc),
-                    onClick = { exportLauncher.launch("logio-yedek-$today.logio") }
+                    onClick = { exportLauncher.launch("mimo-yedek-$today.mimo") }
                 )
                 Spacer(modifier = Modifier.height(10.dp))
                 SettingsActionRow(

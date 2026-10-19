@@ -31,7 +31,7 @@ import javax.crypto.spec.SecretKeySpec
 class WrongPasswordException : IOException("Yedek şifresi yanlış")
 
 /** Dosya bir Logio yedeği değil. */
-class NotABackupException : IOException("Logio yedeği değil")
+class NotABackupException : IOException("Mimo yedeği değil")
 
 internal object BackupCrypto {
     private val MAGIC = "LOGIOBK1".toByteArray(Charsets.US_ASCII)

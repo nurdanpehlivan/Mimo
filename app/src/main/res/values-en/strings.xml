@@ -147,13 +147,13 @@
     <string name="profile_all_time">All time</string>
     <string name="profile_top_types_empty">No entries yet. Once you add your first memory, your favourite entry types will show up here.</string>
     <string name="profile_memory">A memory from the past</string>
-    <string name="profile_memory_desc">Logio picked one for you</string>
+    <string name="profile_memory_desc">Mimo picked one for you</string>
     <string name="profile_memory_empty">As your memories grow, Mimo will remind you of an older one here.</string>
     <string name="profile_another_memory">Another memory</string>
     <string name="profile_settings">Settings</string>
     <string name="profile_settings_desc">Make the app your own</string>
-    <string name="profile_footer">Logio v%1$s · Your data stays on this device</string>
-    <string name="profile_journey_starts">Your Logio journey starts today ✨</string>
+    <string name="profile_footer">Mimo v%1$s · Your data stays on this device</string>
+    <string name="profile_journey_starts">Your Mimo journey starts today ✨</string>
     <plurals name="profile_since">
         <item quantity="one">Since %1$s · %2$d day</item>
         <item quantity="other">Since %1$s · %2$d days</item>
@@ -200,7 +200,7 @@
     <string name="journey_music_cheerful">🎈 Cheerful</string>
     <string name="journey_music_cinematic">🎬 Cinematic</string>
     <string name="journey_music_nostalgic">🌙 Nostalgic</string>
-    <string name="journey_empty">No photo memories in Logio yet. Use the Gallery button to pick photos from your phone.</string>
+    <string name="journey_empty">No photo memories in Mimo yet. Use the Gallery button to pick photos from your phone.</string>
     <string name="journey_manual_title">My Picks</string>
     <string name="link_cat_recipe">Recipe</string>
     <string name="link_cat_place">Place</string>
@@ -420,7 +420,7 @@
     <string name="lock_title">Your journal is locked</string>
     <string name="lock_message">Your memories are just for you. Verify it’s you to continue.</string>
     <string name="lock_unlock">Unlock</string>
-    <string name="lock_prompt_title">Logio</string>
+    <string name="lock_prompt_title">Mimo</string>
     <string name="lock_prompt_subtitle">Verify to open your journal</string>
     <string name="lock_prompt_enable">Verify to turn on app lock</string>
     <string name="lock_prompt_disable">Verify to turn off app lock</string>
@@ -442,7 +442,7 @@
     <string name="backup_working">Working on backup…</string>
     <string name="backup_export_done">Backup saved · Entries: %1$d</string>
     <string name="backup_import_done">Restored · New: %1$d, already present: %2$d</string>
-    <string name="backup_error_password">Wrong password or not a Logio backup</string>
+    <string name="backup_error_password">Wrong password or not a Mimo backup</string>
     <string name="backup_error">Backup operation failed</string>
-    <string name="dlg_mic_permission_needed">Microphone permission is needed to record. You can allow it in Settings → Apps → Logio → Permissions.</string>
+    <string name="dlg_mic_permission_needed">Microphone permission is needed to record. You can allow it in Settings → Apps → Mimo → Permissions.</string>
 </resources>

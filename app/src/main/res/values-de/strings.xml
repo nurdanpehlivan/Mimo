@@ -147,13 +147,13 @@
     <string name="profile_all_time">Gesamte Zeit</string>
     <string name="profile_top_types_empty">Noch keine Einträge. Sobald du deine erste Erinnerung hinzufügst, erscheinen hier deine Lieblingsarten.</string>
     <string name="profile_memory">Eine Erinnerung aus der Vergangenheit</string>
-    <string name="profile_memory_desc">Logio hat eine für dich ausgesucht</string>
+    <string name="profile_memory_desc">Mimo hat eine für dich ausgesucht</string>
     <string name="profile_memory_empty">Wenn deine Erinnerungen wachsen, erinnert dich Mimo hier an eine ältere.</string>
     <string name="profile_another_memory">Andere Erinnerung</string>
     <string name="profile_settings">Einstellungen</string>
     <string name="profile_settings_desc">Passe die App an dich an</string>
-    <string name="profile_footer">Logio v%1$s · Deine Daten bleiben auf diesem Gerät</string>
-    <string name="profile_journey_starts">Deine Logio-Reise beginnt heute ✨</string>
+    <string name="profile_footer">Mimo v%1$s · Deine Daten bleiben auf diesem Gerät</string>
+    <string name="profile_journey_starts">Deine Mimo-Reise beginnt heute ✨</string>
     <plurals name="profile_since">
         <item quantity="one">Seit %1$s · %2$d Tag</item>
         <item quantity="other">Seit %1$s · %2$d Tage</item>
@@ -200,7 +200,7 @@
     <string name="journey_music_cheerful">🎈 Fröhlich</string>
     <string name="journey_music_cinematic">🎬 Filmisch</string>
     <string name="journey_music_nostalgic">🌙 Nostalgisch</string>
-    <string name="journey_empty">Noch keine Foto-Erinnerungen in Logio. Mit der Galerie-Schaltfläche kannst du Fotos von deinem Handy wählen.</string>
+    <string name="journey_empty">Noch keine Foto-Erinnerungen in Mimo. Mit der Galerie-Schaltfläche kannst du Fotos von deinem Handy wählen.</string>
     <string name="journey_manual_title">Meine Auswahl</string>
     <string name="link_cat_recipe">Rezept</string>
     <string name="link_cat_place">Ort</string>
@@ -420,7 +420,7 @@
     <string name="lock_title">Dein Tagebuch ist gesperrt</string>
     <string name="lock_message">Deine Erinnerungen gehören nur dir. Bestätige, dass du es bist.</string>
     <string name="lock_unlock">Entsperren</string>
-    <string name="lock_prompt_title">Logio</string>
+    <string name="lock_prompt_title">Mimo</string>
     <string name="lock_prompt_subtitle">Bestätige, um dein Tagebuch zu öffnen</string>
     <string name="lock_prompt_enable">Bestätige, um die App-Sperre einzuschalten</string>
     <string name="lock_prompt_disable">Bestätige, um die App-Sperre auszuschalten</string>
@@ -442,7 +442,7 @@
     <string name="backup_working">Sicherung wird bearbeitet…</string>
     <string name="backup_export_done">Sicherung gespeichert · Einträge: %1$d</string>
     <string name="backup_import_done">Wiederhergestellt · Neu: %1$d, bereits vorhanden: %2$d</string>
-    <string name="backup_error_password">Falsches Passwort oder keine Logio-Sicherung</string>
+    <string name="backup_error_password">Falsches Passwort oder keine Mimo-Sicherung</string>
     <string name="backup_error">Sicherungsvorgang fehlgeschlagen</string>
-    <string name="dlg_mic_permission_needed">Für die Aufnahme wird die Mikrofonberechtigung benötigt. Du kannst sie unter Einstellungen → Apps → Logio → Berechtigungen erteilen.</string>
+    <string name="dlg_mic_permission_needed">Für die Aufnahme wird die Mikrofonberechtigung benötigt. Du kannst sie unter Einstellungen → Apps → Mimo → Berechtigungen erteilen.</string>
 </resources>

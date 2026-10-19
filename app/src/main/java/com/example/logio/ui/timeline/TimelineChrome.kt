@@ -103,7 +103,7 @@ internal fun LogioTopBar(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "Logio",
+                text = "Mimo",
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.SemiBold,
                 letterSpacing = 0.5.sp,

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name" translatable="false">Logio</string>
+    <string name="app_name" translatable="false">Mimo</string>
     <!-- Hızlı ekleme -->
     <string name="action_note">Not</string>
     <string name="action_mood">Ruh Hali</string>
@@ -154,13 +154,13 @@
     <string name="profile_all_time">Tüm zamanlar</string>
     <string name="profile_top_types_empty">Henüz kayıt yok. İlk anını eklediğinde burada en sevdiğin kayıt türleri görünecek.</string>
     <string name="profile_memory">Geçmişten bir anı</string>
-    <string name="profile_memory_desc">Logio senin için hatırlattı</string>
+    <string name="profile_memory_desc">Mimo senin için hatırlattı</string>
     <string name="profile_memory_empty">Anıların biriktikçe Mimo sana eskilerden birini burada hatırlatacak.</string>
     <string name="profile_another_memory">Başka bir anı</string>
     <string name="profile_settings">Ayarlar</string>
     <string name="profile_settings_desc">Uygulamayı kendine göre ayarla</string>
-    <string name="profile_footer">Logio v%1$s · Verilerin yalnızca bu cihazda saklanır</string>
-    <string name="profile_journey_starts">Logio yolculuğun bugün başlıyor ✨</string>
+    <string name="profile_footer">Mimo v%1$s · Verilerin yalnızca bu cihazda saklanır</string>
+    <string name="profile_journey_starts">Mimo yolculuğun bugün başlıyor ✨</string>
     <plurals name="profile_since">
         <item quantity="one">%1$s tarihinden beri · %2$d gün</item>
         <item quantity="other">%1$s tarihinden beri · %2$d gün</item>
@@ -209,7 +209,7 @@
     <string name="journey_music_cheerful">🎈 Neşeli</string>
     <string name="journey_music_cinematic">🎬 Sinematik</string>
     <string name="journey_music_nostalgic">🌙 Nostaljik</string>
-    <string name="journey_empty">Logio’da henüz fotoğraflı anı yok. Galeri butonuyla telefonundan fotoğraf seçebilirsin.</string>
+    <string name="journey_empty">Mimo’da henüz fotoğraflı anı yok. Galeri butonuyla telefonundan fotoğraf seçebilirsin.</string>
     <string name="journey_manual_title">Benim Seçtiklerim</string>
     <!-- Paylaşım / bağlantı -->
     <string name="link_cat_recipe">Tarif</string>
@@ -434,7 +434,7 @@
     <string name="lock_title">Günlüğün kilitli</string>
     <string name="lock_message">Anıların sadece sana ait. Devam etmek için kimliğini doğrula.</string>
     <string name="lock_unlock">Kilidi aç</string>
-    <string name="lock_prompt_title">Logio</string>
+    <string name="lock_prompt_title">Mimo</string>
     <string name="lock_prompt_subtitle">Günlüğünü açmak için doğrula</string>
     <string name="lock_prompt_enable">Uygulama kilidini açmak için doğrula</string>
     <string name="lock_prompt_disable">Uygulama kilidini kapatmak için doğrula</string>
@@ -456,7 +456,7 @@
     <string name="backup_working">Yedek hazırlanıyor…</string>
     <string name="backup_export_done">Yedek kaydedildi · Kayıt sayısı: %1$d</string>
     <string name="backup_import_done">Geri yüklendi · Yeni: %1$d, zaten vardı: %2$d</string>
-    <string name="backup_error_password">Şifre yanlış ya da dosya bir Logio yedeği değil</string>
+    <string name="backup_error_password">Şifre yanlış ya da dosya bir Mimo yedeği değil</string>
     <string name="backup_error">Yedekleme işlemi başarısız oldu</string>
-    <string name="dlg_mic_permission_needed">Ses kaydı için mikrofon izni gerekiyor. Ayarlar → Uygulamalar → Logio → İzinler’den açabilirsin.</string>
+    <string name="dlg_mic_permission_needed">Ses kaydı için mikrofon izni gerekiyor. Ayarlar → Uygulamalar → Mimo → İzinler’den açabilirsin.</string>
 </resources>

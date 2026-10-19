@@ -147,13 +147,13 @@
     <string name="profile_all_time">Desde siempre</string>
     <string name="profile_top_types_empty">Aún no hay registros. Cuando añadas tu primer recuerdo, aquí verás tus tipos favoritos.</string>
     <string name="profile_memory">Un recuerdo del pasado</string>
-    <string name="profile_memory_desc">Logio eligió uno para ti</string>
+    <string name="profile_memory_desc">Mimo eligió uno para ti</string>
     <string name="profile_memory_empty">A medida que crezcan tus recuerdos, Mimo te recordará aquí uno antiguo.</string>
     <string name="profile_another_memory">Otro recuerdo</string>
     <string name="profile_settings">Ajustes</string>
     <string name="profile_settings_desc">Personaliza la app</string>
-    <string name="profile_footer">Logio v%1$s · Tus datos se quedan en este dispositivo</string>
-    <string name="profile_journey_starts">Tu viaje con Logio empieza hoy ✨</string>
+    <string name="profile_footer">Mimo v%1$s · Tus datos se quedan en este dispositivo</string>
+    <string name="profile_journey_starts">Tu viaje con Mimo empieza hoy ✨</string>
     <plurals name="profile_since">
         <item quantity="one">Desde el %1$s · %2$d día</item>
         <item quantity="other">Desde el %1$s · %2$d días</item>
@@ -200,7 +200,7 @@
     <string name="journey_music_cheerful">🎈 Alegre</string>
     <string name="journey_music_cinematic">🎬 Cinematográfica</string>
     <string name="journey_music_nostalgic">🌙 Nostálgica</string>
-    <string name="journey_empty">Aún no hay recuerdos con foto en Logio. Usa el botón Galería para elegir fotos de tu teléfono.</string>
+    <string name="journey_empty">Aún no hay recuerdos con foto en Mimo. Usa el botón Galería para elegir fotos de tu teléfono.</string>
     <string name="journey_manual_title">Mi selección</string>
     <string name="link_cat_recipe">Receta</string>
     <string name="link_cat_place">Lugar</string>
@@ -420,7 +420,7 @@
     <string name="lock_title">Tu diario está bloqueado</string>
     <string name="lock_message">Tus recuerdos son solo tuyos. Verifica que eres tú para continuar.</string>
     <string name="lock_unlock">Desbloquear</string>
-    <string name="lock_prompt_title">Logio</string>
+    <string name="lock_prompt_title">Mimo</string>
     <string name="lock_prompt_subtitle">Verifica para abrir tu diario</string>
     <string name="lock_prompt_enable">Verifica para activar el bloqueo</string>
     <string name="lock_prompt_disable">Verifica para desactivar el bloqueo</string>
@@ -442,7 +442,7 @@
     <string name="backup_working">Procesando la copia…</string>
     <string name="backup_export_done">Copia guardada · Entradas: %1$d</string>
     <string name="backup_import_done">Restaurado · Nuevas: %1$d, ya existentes: %2$d</string>
-    <string name="backup_error_password">Contraseña incorrecta o no es una copia de Logio</string>
+    <string name="backup_error_password">Contraseña incorrecta o no es una copia de Mimo</string>
     <string name="backup_error">La operación de copia falló</string>
-    <string name="dlg_mic_permission_needed">Se necesita permiso del micrófono para grabar. Puedes activarlo en Ajustes → Aplicaciones → Logio → Permisos.</string>
+    <string name="dlg_mic_permission_needed">Se necesita permiso del micrófono para grabar. Puedes activarlo en Ajustes → Aplicaciones → Mimo → Permisos.</string>
 </resources>
