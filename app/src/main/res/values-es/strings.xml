@@ -431,6 +431,8 @@
     <string name="settings_backup_export_desc">Todas las entradas, fotos y audios en un archivo cifrado</string>
     <string name="settings_backup_import">Restaurar desde copia</string>
     <string name="settings_backup_import_desc">Trae entradas de otro teléfono o de una versión anterior</string>
+    <string name="settings_privacy_policy">Política de privacidad</string>
+    <string name="settings_privacy_policy_desc">Cómo trata Mimo tus datos</string>
     <string name="backup_password_title_export">Crea una contraseña para la copia</string>
     <string name="backup_password_title_import">Introduce la contraseña de la copia</string>
     <string name="backup_password">Contraseña</string>

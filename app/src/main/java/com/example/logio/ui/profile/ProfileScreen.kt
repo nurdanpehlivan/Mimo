@@ -59,6 +59,8 @@ import androidx.compose.material.icons.rounded.Lock
 import androidx.compose.material.icons.rounded.Download
 import androidx.compose.material.icons.rounded.Upload
 import androidx.compose.material.icons.rounded.WorkspacePremium
+import androidx.compose.material.icons.rounded.PrivacyTip
+import androidx.compose.ui.platform.LocalUriHandler
 import com.example.logio.ui.premium.PremiumDialog
 import com.example.logio.ui.premium.PremiumReason
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -101,6 +103,9 @@ private val InkPrimary = MimoNavy
 private val InkSecondary = MimoNavyMuted
 private val InkMuted = Color(0xFF8A90B4)
 
+// Play Console'daki gizlilik politikası adresiyle aynı olmalı
+private const val PRIVACY_POLICY_URL = "https://sites.google.com/view/mimo-privacy"
+
 private fun formatNumber(value: Int): String = String.format(TrLocale, "%,d", value)
 
 // ---------- Ekran ----------
@@ -119,6 +124,7 @@ fun ProfileScreen(
     var showEditDialog by remember { mutableStateOf(false) }
     var detailEntry by remember { mutableStateOf<JournalEntryEntity?>(null) }
     val context = LocalContext.current
+    val uriHandler = LocalUriHandler.current
     // Kilit ayarındaki yazılar çizim sırasında alınır; dil değişince yenileriyle güncellenir
     val lockUnavailableText = stringResource(R.string.lock_unavailable)
     val lockPromptTitle = stringResource(R.string.lock_prompt_title)
@@ -259,6 +265,14 @@ fun ProfileScreen(
                     title = stringResource(R.string.settings_backup_import),
                     description = stringResource(R.string.settings_backup_import_desc),
                     onClick = { importLauncher.launch(arrayOf("*/*")) }
+                )
+                Spacer(modifier = Modifier.height(10.dp))
+                // Google Play, gizlilik politikasına uygulama içinden de ulaşılabilmesini istiyor
+                SettingsActionRow(
+                    icon = Icons.Rounded.PrivacyTip,
+                    title = stringResource(R.string.settings_privacy_policy),
+                    description = stringResource(R.string.settings_privacy_policy_desc),
+                    onClick = { runCatching { uriHandler.openUri(PRIVACY_POLICY_URL) } }
                 )
 
                 Spacer(modifier = Modifier.height(24.dp))

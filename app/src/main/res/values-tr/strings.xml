@@ -445,6 +445,8 @@
     <string name="settings_backup_export_desc">Tüm kayıtlar, fotoğraflar ve sesler şifreli tek bir dosyada</string>
     <string name="settings_backup_import">Yedekten geri yükle</string>
     <string name="settings_backup_import_desc">Başka bir telefondan ya da eski sürümden kayıtları al</string>
+    <string name="settings_privacy_policy">Gizlilik politikası</string>
+    <string name="settings_privacy_policy_desc">Mimo verilerini nasıl kullanır</string>
     <string name="backup_password_title_export">Yedek şifresi belirle</string>
     <string name="backup_password_title_import">Yedek şifresini gir</string>
     <string name="backup_password">Şifre</string>
