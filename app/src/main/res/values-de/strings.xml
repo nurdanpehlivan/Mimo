@@ -27,7 +27,9 @@
     <string name="tile_journal_hint">Notiz schreiben</string>
     <string name="tile_mood_hint">Wie geht’s dir?</string>
     <string name="tile_photo_hint">Erinnerung</string>
-    <string name="tile_meal">Mahlzeit (KI)</string>
+    <string name="tile_meal">Mahlzeit</string>
+    <!-- Yapay zekâ kullanan menü kutularındaki küçük etiket -->
+    <string name="badge_ai">KI</string>
     <string name="tile_meal_hint">Kalorien scannen</string>
     <string name="tile_voice">Sprachnotiz</string>
     <string name="tile_voice_hint">Aufnehmen</string>
@@ -252,6 +254,7 @@
     <string name="dlg_pick_on_map">Auf der Karte wählen</string>
     <string name="dlg_search_place">Ort suchen</string>
     <string name="dlg_place_name">Name des Ortes</string>
+    <string name="dlg_map_finding_location">Dein Standort wird gesucht… Du kannst auch auf die Karte tippen, um einen Ort zu wählen.</string>
     <string name="dlg_save_location">Ort speichern</string>
     <string name="dlg_change">Ändern</string>
     <string name="dlg_your_note">Deine Notiz...</string>

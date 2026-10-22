@@ -233,7 +233,7 @@ private fun MealCard(
             Column(modifier = Modifier.weight(1f)) {
                 Row(verticalAlignment = Alignment.Top) {
                     Text(
-                        text = entry.title.ifBlank { stringResource(R.string.type_meal) },
+                        text = displayEntryTitle(entry) ?: stringResource(R.string.type_meal),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.SemiBold,
                         color = MimoNavy,
@@ -568,7 +568,7 @@ private fun TodoCard(
         Row(verticalAlignment = Alignment.CenterVertically) {
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = entry.title.ifBlank { stringResource(R.string.action_todo) },
+                    text = displayEntryTitle(entry) ?: stringResource(R.string.action_todo),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.SemiBold,
                     color = MimoNavy
@@ -693,7 +693,7 @@ private fun SharedLinkCard(
                 }
                 Spacer(modifier = Modifier.height(6.dp))
                 Text(
-                    text = entry.title.ifBlank { stringResource(R.string.action_link) },
+                    text = displayEntryTitle(entry) ?: stringResource(R.string.action_link),
                     style = MaterialTheme.typography.titleSmall,
                     fontWeight = FontWeight.SemiBold,
                     color = MimoNavy,

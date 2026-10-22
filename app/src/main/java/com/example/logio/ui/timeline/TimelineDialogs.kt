@@ -79,6 +79,11 @@ import com.example.logio.ui.share.classifySharedLink
 import com.example.logio.ui.share.hostLabel
 import com.example.logio.ui.share.parseSharedText
 import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationSettingsRequest
+import com.google.android.gms.common.api.ResolvableApiException
+import androidx.activity.result.IntentSenderRequest
+import android.app.Activity
 import com.google.android.gms.location.Priority
 import com.google.android.gms.tasks.CancellationTokenSource
 import android.location.Location
@@ -310,13 +315,13 @@ fun LocationAndMapDialog(onDismiss: () -> Unit, onSearch: (String) -> Unit, sear
 fun GoogleMapPickerContent(onConfirm: (Double, Double, String, String) -> Unit) {
     val context = LocalContext.current
     val fusedLocationClient = remember { LocationServices.getFusedLocationProviderClient(context) }
-    val defaultLocation = LatLng(41.0082, 28.9784) // Konum alınamazsa (izin yok / konum kapalı) İstanbul
-    var selectedLocation by remember { mutableStateOf(defaultLocation) }
+    // Konum bulunana ya da kullanıcı haritaya dokunana kadar seçili yer yok (sahte bir varsayılan şehir gösterilmez)
+    var selectedLocation by remember { mutableStateOf<LatLng?>(null) }
     // Kullanıcı haritaya dokunup bir yer seçtiyse, sonradan gelen konum bu seçimi ezmez
     var pickedByUser by remember { mutableStateOf(false) }
     var locationName by remember { mutableStateOf("") }
     var note by remember { mutableStateOf("") }
-    val cameraPositionState = rememberCameraPositionState { position = CameraPosition.fromLatLngZoom(defaultLocation, 12f) }
+    val cameraPositionState = rememberCameraPositionState { position = CameraPosition.fromLatLngZoom(WorldView, 2f) }
 
     fun isLocationGranted() =
         ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED ||
@@ -333,36 +338,67 @@ fun GoogleMapPickerContent(onConfirm: (Double, Double, String, String) -> Unit) 
         }
     }
 
-    // İzin varsa şu anki konuma git: önce son bilinen konum (anında), ardından güncel konum (birkaç saniye)
     val locationRequest = remember { CancellationTokenSource() }
     DisposableEffect(Unit) { onDispose { locationRequest.cancel() } }
+    val moveTo: (Location?) -> Unit = { location ->
+        if (location != null && !pickedByUser) {
+            val latLng = LatLng(location.latitude, location.longitude)
+            selectedLocation = latLng
+            cameraPositionState.move(CameraUpdateFactory.newLatLngZoom(latLng, 15f))
+        }
+    }
+    // Şu anki konum: önce son bilinen (anında), ardından GPS ile güncel konum (birkaç saniye)
+    fun fetchLocation() {
+        fusedLocationClient.lastLocation.addOnSuccessListener(moveTo)
+        fusedLocationClient.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, locationRequest.token).addOnSuccessListener(moveTo)
+    }
+    // Telefonun konumu kapalıysa Google'ın "Konumu aç" penceresi gösterilir. Kullanıcı reddetse de denenir:
+    // pencere yalnızca "Konum doğruluğu"nu istemiş olabilir, GPS yine de konum verebilir
+    val enableLocationLauncher = rememberLauncherForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) {
+        fetchLocation()
+    }
     LaunchedEffect(hasPermission) {
         if (!hasPermission) return@LaunchedEffect
-        val moveTo: (Location?) -> Unit = { location ->
-            if (location != null && !pickedByUser) {
-                val latLng = LatLng(location.latitude, location.longitude)
-                selectedLocation = latLng
-                cameraPositionState.move(CameraUpdateFactory.newLatLngZoom(latLng, 15f))
+        val settingsRequest = LocationSettingsRequest.Builder()
+            .addLocationRequest(LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 10_000L).build())
+            .build()
+        LocationServices.getSettingsClient(context).checkLocationSettings(settingsRequest)
+            .addOnSuccessListener { fetchLocation() }
+            .addOnFailureListener { error ->
+                if (error is ResolvableApiException) {
+                    enableLocationLauncher.launch(IntentSenderRequest.Builder(error.resolution).build())
+                } else {
+                    fetchLocation()
+                }
             }
-        }
-        fusedLocationClient.lastLocation.addOnSuccessListener(moveTo)
-        fusedLocationClient.getCurrentLocation(Priority.PRIORITY_BALANCED_POWER_ACCURACY, locationRequest.token)
-            .addOnSuccessListener(moveTo)
     }
 
     // İşaret bir kez oluşturulur; haritaya dokunulunca (selectedLocation değişince) yeni konuma taşınır
-    val markerState = rememberMarkerState(position = selectedLocation)
-    LaunchedEffect(selectedLocation) { markerState.position = selectedLocation }
+    val markerState = rememberMarkerState(position = selectedLocation ?: WorldView)
+    LaunchedEffect(selectedLocation) { selectedLocation?.let { markerState.position = it } }
 
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         Box(modifier = Modifier.fillMaxWidth().height(200.dp).clip(RoundedCornerShape(20.dp))) {
-            GoogleMap(modifier = Modifier.fillMaxSize(), cameraPositionState = cameraPositionState, properties = MapProperties(isMyLocationEnabled = hasPermission), uiSettings = MapUiSettings(myLocationButtonEnabled = hasPermission), onMapClick = { selectedLocation = it; pickedByUser = true }) { Marker(state = markerState) }
+            GoogleMap(modifier = Modifier.fillMaxSize(), cameraPositionState = cameraPositionState, properties = MapProperties(isMyLocationEnabled = hasPermission), uiSettings = MapUiSettings(myLocationButtonEnabled = hasPermission), onMapClick = { selectedLocation = it; pickedByUser = true }) {
+                if (selectedLocation != null) Marker(state = markerState)
+            }
+        }
+        if (selectedLocation == null) {
+            Text(stringResource(R.string.dlg_map_finding_location), style = MaterialTheme.typography.bodySmall, color = MimoNavyMuted)
         }
         OutlinedTextField(colors = logioFieldColors(), value = locationName, onValueChange = { locationName = it }, label = { Text(stringResource(R.string.dlg_place_name)) }, modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(16.dp))
         OutlinedTextField(colors = logioFieldColors(), value = note, onValueChange = { note = it }, label = { Text(stringResource(R.string.action_note)) }, modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(16.dp))
-        Button(onClick = { onConfirm(selectedLocation.latitude, selectedLocation.longitude, locationName, note) }, modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(14.dp)) { Text(stringResource(R.string.dlg_save_location)) }
+        Button(
+            onClick = { selectedLocation?.let { onConfirm(it.latitude, it.longitude, locationName, note) } },
+            enabled = selectedLocation != null,
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(14.dp)
+        ) { Text(stringResource(R.string.dlg_save_location)) }
     }
 }
+
+// Konum henüz bilinmezken haritanın gösterdiği geniş görünüm (Avrupa, Afrika, Orta Doğu)
+private val WorldView = LatLng(30.0, 20.0)
 
 @Composable
 fun <T> SearchInputDialog(title: String, label: String, onDismiss: () -> Unit, onSearch: (String) -> Unit, isSearching: Boolean, searchResults: List<T>, itemContent: @Composable (T) -> Unit, onConfirm: (T, String) -> Unit) {
@@ -783,8 +819,8 @@ fun EntryDetailSheet(
                         }
                     }
                 }
-            } else if (entry.content.isNotBlank()) {
-                Text(entry.content, fontSize = 16.sp, color = Color(0xFF334155), lineHeight = 24.sp)
+            } else {
+                displayEntryContent(entry)?.let { Text(it, fontSize = 16.sp, color = Color(0xFF334155), lineHeight = 24.sp) }
             }
 
             if (entry.calories != null) {

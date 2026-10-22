@@ -1,24 +1,19 @@
 /*
  * Theme: Uygulamanın Material3 teması (LogioTheme).
  *
- * Açık/koyu renk şemaları, yazı tipleri ve durum/gezinme çubuğu görünümü burada ayarlanır.
+ * Açık/koyu renk şemaları ve yazı tipleri burada ayarlanır (durum/gezinme çubukları: MainActivity.enableEdgeToEdge).
  * MainActivity tüm ekranları LogioTheme { ... } ile sarar.
  */
 package com.example.logio.ui.theme
 
-import android.app.Activity
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Shapes
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.unit.dp
-import androidx.core.view.WindowCompat
 
 private val LightColorScheme = lightColorScheme(
     primary = MimoPurple,
@@ -81,23 +76,9 @@ fun LogioTheme(
     dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {
+    // Durum ve gezinme çubukları MainActivity'deki enableEdgeToEdge ile ayarlanır
+    // (window.statusBarColor gibi eski API'ler Android 15'te kaldırıldı)
     val colorScheme = if (darkTheme) DarkColorScheme else LightColorScheme
-
-    val view = LocalView.current
-    if (!view.isInEditMode) {
-        SideEffect {
-            val window = (view.context as Activity).window
-            // Android 15+ bu renkleri yok sayar (kenardan kenara çizim zorunlu); eski sürümlerde görünüm aynı kalsın diye duruyor
-            @Suppress("DEPRECATION")
-            window.statusBarColor = Color.Transparent.toArgb()
-            @Suppress("DEPRECATION")
-            window.navigationBarColor = if (darkTheme) Color(0xFF16142B).toArgb() else MimoCream.toArgb()
-            WindowCompat.getInsetsController(window, view).apply {
-                isAppearanceLightStatusBars = !darkTheme
-                isAppearanceLightNavigationBars = !darkTheme
-            }
-        }
-    }
 
     MaterialTheme(
         colorScheme = colorScheme,

@@ -41,11 +41,12 @@ import com.example.logio.ui.theme.MimoNavyMuted
 import com.example.logio.ui.theme.MimoPurple
 import kotlinx.coroutines.launch
 
-/** Menüdeki bir kutucuk: kayıt türü + menüde görünen ad ve kısa ipucu. */
+/** Menüdeki bir kutucuk: kayıt türü + menüde görünen ad ve kısa ipucu. [usesAi]: köşede "AI" etiketi gösterilir. */
 private data class MenuTile(
     val action: QuickLogAction,
     @StringRes val label: Int = action.titleRes,
-    @StringRes val hint: Int? = null
+    @StringRes val hint: Int? = null,
+    val usesAi: Boolean = false
 )
 
 private data class MenuPage(@StringRes val title: Int, val tiles: List<MenuTile>, val rows: Int, val tileHeight: Dp)
@@ -63,8 +64,8 @@ private val MenuPages = listOf(
             MenuTile(QuickLogAction.LOG, R.string.tile_journal, R.string.tile_journal_hint),
             MenuTile(QuickLogAction.MOOD, R.string.action_mood, R.string.tile_mood_hint),
             MenuTile(QuickLogAction.PHOTO, R.string.action_photo, R.string.tile_photo_hint),
-            MenuTile(QuickLogAction.MEAL, R.string.tile_meal, R.string.tile_meal_hint),
-            MenuTile(QuickLogAction.VOICE, R.string.tile_voice, R.string.tile_voice_hint),
+            MenuTile(QuickLogAction.MEAL, R.string.tile_meal, R.string.tile_meal_hint, usesAi = true),
+            MenuTile(QuickLogAction.VOICE, R.string.tile_voice, R.string.tile_voice_hint, usesAi = true),
             MenuTile(QuickLogAction.WATER, R.string.action_water, R.string.tile_water_hint),
             MenuTile(QuickLogAction.STEPS, R.string.tile_steps, R.string.tile_steps_hint),
             MenuTile(QuickLogAction.SLEEP, R.string.action_sleep, R.string.tile_sleep_hint)
@@ -78,7 +79,6 @@ private val MenuPages = listOf(
             MenuTile(QuickLogAction.LINK),
             MenuTile(QuickLogAction.LOCATION, R.string.tile_map),
             MenuTile(QuickLogAction.TODO, R.string.tile_tasks),
-            MenuTile(QuickLogAction.JOURNEY),
             MenuTile(QuickLogAction.EXPENSE),
             MenuTile(QuickLogAction.COFFEE),
             MenuTile(QuickLogAction.ALCOHOL),
@@ -86,7 +86,9 @@ private val MenuPages = listOf(
             MenuTile(QuickLogAction.BOOK),
             MenuTile(QuickLogAction.MUSIC),
             MenuTile(QuickLogAction.DRAW),
-            MenuTile(QuickLogAction.VIDEO)
+            MenuTile(QuickLogAction.VIDEO),
+            // Journey en sonda: diğer kayıtlardan üretilen bir özet olduğu için
+            MenuTile(QuickLogAction.JOURNEY)
         )
     )
 )
@@ -189,50 +191,73 @@ private fun MenuTileItem(
     modifier: Modifier = Modifier
 ) {
     val action = tile.action
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
+    Box(
         modifier = modifier
             .clip(RoundedCornerShape(18.dp))
             .background(action.bgColor.copy(alpha = if (large) 0.85f else 0.6f))
             .clickable(onClick = onClick)
-            .padding(horizontal = 4.dp, vertical = 8.dp)
     ) {
-        Box(
-            contentAlignment = Alignment.Center,
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
             modifier = Modifier
-                .size(if (large) 48.dp else 38.dp)
-                .clip(RoundedCornerShape(if (large) 16.dp else 13.dp))
-                .background(Color.White.copy(alpha = 0.8f))
+                .fillMaxSize()
+                .padding(horizontal = 4.dp, vertical = 8.dp)
         ) {
-            Icon(
-                imageVector = action.icon,
-                contentDescription = null,
-                tint = action.iconColor,
-                modifier = Modifier.size(if (large) 26.dp else 21.dp)
-            )
-        }
-        Spacer(modifier = Modifier.height(if (large) 8.dp else 5.dp))
-        Text(
-            text = stringResource(tile.label),
-            fontSize = if (large) 12.sp else 11.sp,
-            fontWeight = FontWeight.SemiBold,
-            color = Color(0xFF334155),
-            textAlign = TextAlign.Center,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis
-        )
-        if (large && tile.hint != null) {
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier
+                    .size(if (large) 48.dp else 38.dp)
+                    .clip(RoundedCornerShape(if (large) 16.dp else 13.dp))
+                    .background(Color.White.copy(alpha = 0.8f))
+            ) {
+                Icon(
+                    imageVector = action.icon,
+                    contentDescription = null,
+                    tint = action.iconColor,
+                    modifier = Modifier.size(if (large) 26.dp else 21.dp)
+                )
+            }
+            Spacer(modifier = Modifier.height(if (large) 8.dp else 5.dp))
             Text(
-                text = stringResource(tile.hint),
-                fontSize = 10.sp,
-                color = MimoNavyMuted,
+                text = stringResource(tile.label),
+                fontSize = if (large) 12.sp else 11.sp,
+                fontWeight = FontWeight.SemiBold,
+                color = Color(0xFF334155),
                 textAlign = TextAlign.Center,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
+            if (large && tile.hint != null) {
+                Text(
+                    text = stringResource(tile.hint),
+                    fontSize = 10.sp,
+                    color = MimoNavyMuted,
+                    textAlign = TextAlign.Center,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
+        }
+        if (tile.usesAi) {
+            AiBadge(modifier = Modifier.align(Alignment.TopEnd).padding(6.dp))
         }
     }
+}
+
+/** Yapay zekâ kullanan kutuların köşesindeki küçük etiket. */
+@Composable
+private fun AiBadge(modifier: Modifier = Modifier) {
+    Text(
+        text = stringResource(R.string.badge_ai),
+        fontSize = 9.sp,
+        fontWeight = FontWeight.Bold,
+        color = Color.White,
+        modifier = modifier
+            .clip(RoundedCornerShape(6.dp))
+            .background(MimoPurple)
+            .padding(horizontal = 5.dp, vertical = 1.dp)
+    )
 }
 
 /** Sayfa göstergesi: aktif sayfa uzun hap, diğerleri küçük nokta. */

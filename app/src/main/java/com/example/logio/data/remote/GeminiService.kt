@@ -9,6 +9,7 @@
 package com.example.logio.data.remote
 
 import android.graphics.Bitmap
+import android.util.Log
 import timber.log.Timber
 import com.google.firebase.Firebase
 import com.google.firebase.ai.GenerativeModel
@@ -43,6 +44,7 @@ class GeminiService @Inject constructor() {
 
     companion object {
         private const val MAX_IMAGE_DIMENSION = 800
+        private const val TAG = "MimoAI"
     }
 
     private val candidateModels = listOf(
@@ -165,7 +167,8 @@ class GeminiService @Inject constructor() {
      */
     private suspend fun handleModelError(modelName: String, e: Exception) {
         val msg = e.message ?: ""
-        Timber.w("Hata ($modelName): $msg")
+        // Timber release'te kapalı; Play sürümündeki sorunlar logcat'te görülebilsin diye hata türü her zaman yazılır
+        Log.w(TAG, "Hata ($modelName): ${e.javaClass.simpleName}: $msg", e)
 
         if (isQuotaExhausted(e)) {
             throw GeminiQuotaException("Günlük ücretsiz limit doldu")

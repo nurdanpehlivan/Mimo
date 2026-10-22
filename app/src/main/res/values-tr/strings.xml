@@ -28,7 +28,9 @@
     <string name="tile_journal_hint">Not yaz</string>
     <string name="tile_mood_hint">Nasılsın?</string>
     <string name="tile_photo_hint">Anı ekle</string>
-    <string name="tile_meal">Öğün (AI)</string>
+    <string name="tile_meal">Öğün</string>
+    <!-- Yapay zekâ kullanan menü kutularındaki küçük etiket -->
+    <string name="badge_ai">AI</string>
     <string name="tile_meal_hint">Kalori tara</string>
     <string name="tile_voice">Sesli Not</string>
     <string name="tile_voice_hint">Kaydet</string>
@@ -263,6 +265,7 @@
     <string name="dlg_pick_on_map">Haritadan Seç</string>
     <string name="dlg_search_place">Mekan Ara</string>
     <string name="dlg_place_name">Mekan İsmi</string>
+    <string name="dlg_map_finding_location">Konumun bulunuyor… İstersen haritaya dokunarak da yer seçebilirsin.</string>
     <string name="dlg_save_location">Konumu Kaydet</string>
     <string name="dlg_change">Değiştir</string>
     <string name="dlg_your_note">Notun...</string>

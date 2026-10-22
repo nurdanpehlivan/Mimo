@@ -59,8 +59,9 @@ fun isBrokenTemplateText(value: String): Boolean {
     return value.contains("\\(") || value.contains("₺null")
 }
 
+// Başlık ve içerik, uygulamanın yazdığı metinlerse ekranın diline çevrilerek gösterilir (bkz. EntryLocalizer)
 @Composable
-fun displayEntryTitle(entry: JournalEntryEntity): String? {
+fun displayEntryTitle(entry: JournalEntryEntity, localizer: EntryLocalizer = rememberEntryLocalizer()): String? {
     val title = entry.title.trim()
     if (title.isBlank() || isBrokenTemplateText(title)) {
         return when (entry.entryType) {
@@ -68,14 +69,15 @@ fun displayEntryTitle(entry: JournalEntryEntity): String? {
             else -> null
         }
     }
-    return title
+    return localizer.title(entry)
 }
 
-fun displayEntryContent(entry: JournalEntryEntity): String? {
+@Composable
+fun displayEntryContent(entry: JournalEntryEntity, localizer: EntryLocalizer = rememberEntryLocalizer()): String? {
     if (entry.entryType == EntryType.TODO) return null
     val content = entry.content.trim()
     if (content.isBlank() || isBrokenTemplateText(content)) return null
-    return content
+    return localizer.content(entry)
 }
 
 /** Harcama çipindeki tutar, telefonun bölgesinin para birimiyle ("₺250", "250 €", "$12.50"). */

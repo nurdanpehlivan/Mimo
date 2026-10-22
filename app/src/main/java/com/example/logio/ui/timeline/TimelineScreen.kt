@@ -69,6 +69,7 @@ fun TimelineScreen(
     onNavigate: (BottomTab) -> Unit = {}
 ) {
     val entries by viewModel.entries.collectAsState()
+    val entriesLoaded by viewModel.entriesLoaded.collectAsState()
     val profile by viewModel.profile.collectAsState()
     val isAnalyzing by viewModel.isAnalyzing.collectAsState()
     val isRecording by viewModel.isRecording.collectAsState()
@@ -405,7 +406,7 @@ fun TimelineScreen(
 
                     }
 
-                    if (visibleGroups.isEmpty()) {
+                    if (visibleGroups.isEmpty() && entriesLoaded) {
                         item(key = "empty") {
                             Column(
                                 horizontalAlignment = Alignment.CenterHorizontally,

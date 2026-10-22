@@ -54,6 +54,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -96,6 +97,11 @@ class TimelineViewModel @Inject constructor(
 
     val entries: StateFlow<List<JournalEntryEntity>> = journalRepository.entries
         .stateIn(scope = viewModelScope, started = SharingStarted.WhileSubscribed(5000), initialValue = emptyList())
+
+    // Şifreli veritabanı açılırken ilk liste birkaç saniye gecikebilir; o arada "Henüz kayıt yok" gösterilmesin
+    val entriesLoaded: StateFlow<Boolean> = journalRepository.entries
+        .map { true }
+        .stateIn(scope = viewModelScope, started = SharingStarted.WhileSubscribed(5000), initialValue = false)
 
     val profile: StateFlow<UserProfile> = profileRepository.profile
 

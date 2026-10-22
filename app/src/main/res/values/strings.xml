@@ -28,7 +28,9 @@
     <string name="tile_journal_hint">Write a note</string>
     <string name="tile_mood_hint">How are you?</string>
     <string name="tile_photo_hint">Add a memory</string>
-    <string name="tile_meal">Meal (AI)</string>
+    <string name="tile_meal">Meal</string>
+    <!-- Yapay zekâ kullanan menü kutularındaki küçük etiket -->
+    <string name="badge_ai">AI</string>
     <string name="tile_meal_hint">Scan calories</string>
     <string name="tile_voice">Voice Note</string>
     <string name="tile_voice_hint">Record</string>
@@ -253,6 +255,7 @@
     <string name="dlg_pick_on_map">Pick on Map</string>
     <string name="dlg_search_place">Search a place</string>
     <string name="dlg_place_name">Place name</string>
+    <string name="dlg_map_finding_location">Finding your location… You can also tap the map to pick a place.</string>
     <string name="dlg_save_location">Save Location</string>
     <string name="dlg_change">Change</string>
     <string name="dlg_your_note">Your note...</string>

@@ -15,6 +15,8 @@ import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.SystemBarStyle
+import android.graphics.Color as AndroidColor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -47,7 +49,11 @@ class MainActivity : FragmentActivity() {
         super.onCreate(savedInstanceState)
         locked = savedInstanceState?.getBoolean(KEY_LOCKED) ?: AppLock.isEnabled(this)
 
-        enableEdgeToEdge()
+        // Uygulama her zaman açık temada: çubuklar şeffaf, simgeleri koyu
+        enableEdgeToEdge(
+            statusBarStyle = SystemBarStyle.light(AndroidColor.TRANSPARENT, AndroidColor.TRANSPARENT),
+            navigationBarStyle = SystemBarStyle.light(AndroidColor.TRANSPARENT, AndroidColor.TRANSPARENT)
+        )
         setContent {
             LogioTheme {
                 if (locked) LockScreen(onUnlock = ::unlock) else LogioRoot()

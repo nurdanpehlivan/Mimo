@@ -7,6 +7,10 @@
 package com.example.logio.util
 
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.Matrix
+import android.media.ExifInterface
 import android.net.Uri
 import timber.log.Timber
 import androidx.annotation.RawRes
@@ -92,17 +96,68 @@ class JourneyVideoMaker(private val context: Context) {
         Timber.d("Video başlıyor: ${photos.size} fotoğraf, şablon=${template.name}")
 
         withContext(Dispatchers.IO) { if (outputFile.exists()) outputFile.delete() }
+        val frameDir = File(context.cacheDir, "journey_frames")
         try {
-            val composition = buildComposition(photos, template)
+            // Kamera fotoğrafları çok büyük olabilir (50 MP): olduğu gibi verilirse bellek yetmez ve uygulama çöker.
+            // Önce video boyutuna küçültülüp yönü düzeltilmiş kopyaları hazırlanır.
+            val frames = withContext(Dispatchers.IO) { prepareFrames(photos, frameDir) }
+            if (frames.isEmpty()) throw NoJourneyPhotosException()
+            val composition = buildComposition(frames, template)
             // Transformer, oluşturulduğu thread'in Looper'ını kullanır: ana thread'de başlat
             withContext(Dispatchers.Main) { export(composition, outputFile) }
         } catch (e: Exception) {
             withContext(Dispatchers.IO) { outputFile.delete() }
             throw e
+        } finally {
+            withContext(Dispatchers.IO) { frameDir.deleteRecursively() }
         }
 
         Timber.d("Video hazır: ${outputFile.absolutePath} (${outputFile.length()} bayt)")
         return outputFile
+    }
+
+    /** Her fotoğrafı en fazla video boyutunda, doğru yönde bir JPEG olarak hazırlar; okunamayanlar atlanır. */
+    private fun prepareFrames(photos: List<File>, frameDir: File): List<File> {
+        frameDir.deleteRecursively()
+        frameDir.mkdirs()
+        return photos.mapIndexedNotNull { index, photo ->
+            try {
+                val bitmap = decodeScaled(photo) ?: return@mapIndexedNotNull null
+                val frame = File(frameDir, "frame_$index.jpg")
+                frame.outputStream().use { bitmap.compress(Bitmap.CompressFormat.JPEG, 90, it) }
+                bitmap.recycle()
+                frame
+            } catch (e: Exception) {
+                Timber.w(e, "Fotoğraf hazırlanamadı: ${photo.name}")
+                null
+            } catch (e: OutOfMemoryError) {
+                Timber.w(e, "Fotoğraf için bellek yetmedi: ${photo.name}")
+                null
+            }
+        }
+    }
+
+    private fun decodeScaled(photo: File): Bitmap? {
+        val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
+        BitmapFactory.decodeFile(photo.absolutePath, bounds)
+        if (bounds.outWidth <= 0 || bounds.outHeight <= 0) return null
+
+        // 2'nin katlarıyla küçültülerek okunur: uzun kenar videonun uzun kenarının (1920) biraz üstünde kalır
+        var sampleSize = 1
+        while (maxOf(bounds.outWidth, bounds.outHeight) / (sampleSize * 2) >= HEIGHT) sampleSize *= 2
+        val decoded = BitmapFactory.decodeFile(photo.absolutePath, BitmapFactory.Options().apply { inSampleSize = sampleSize })
+            ?: return null
+
+        val rotation = when (ExifInterface(photo.absolutePath).getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)) {
+            ExifInterface.ORIENTATION_ROTATE_90 -> 90f
+            ExifInterface.ORIENTATION_ROTATE_180 -> 180f
+            ExifInterface.ORIENTATION_ROTATE_270 -> 270f
+            else -> 0f
+        }
+        if (rotation == 0f) return decoded
+        val rotated = Bitmap.createBitmap(decoded, 0, 0, decoded.width, decoded.height, Matrix().apply { postRotate(rotation) }, true)
+        if (rotated != decoded) decoded.recycle()
+        return rotated
     }
 
     private fun buildComposition(photos: List<File>, template: JourneyTemplate): Composition {

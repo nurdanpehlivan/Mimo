@@ -17,7 +17,7 @@ android {
         applicationId = "com.nurdanpehlivan.mimo"
         minSdk = 26
         targetSdk = 36
-        versionCode = 10
+        versionCode = 11
         versionName = "1.8"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"

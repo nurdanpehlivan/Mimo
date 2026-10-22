@@ -27,7 +27,9 @@
     <string name="tile_journal_hint">Escribir nota</string>
     <string name="tile_mood_hint">¿Cómo estás?</string>
     <string name="tile_photo_hint">Añadir recuerdo</string>
-    <string name="tile_meal">Comida (IA)</string>
+    <string name="tile_meal">Comida</string>
+    <!-- Yapay zekâ kullanan menü kutularındaki küçük etiket -->
+    <string name="badge_ai">IA</string>
     <string name="tile_meal_hint">Escanear calorías</string>
     <string name="tile_voice">Nota de voz</string>
     <string name="tile_voice_hint">Grabar</string>
@@ -252,6 +254,7 @@
     <string name="dlg_pick_on_map">Elegir en el mapa</string>
     <string name="dlg_search_place">Buscar un lugar</string>
     <string name="dlg_place_name">Nombre del lugar</string>
+    <string name="dlg_map_finding_location">Buscando tu ubicación… También puedes tocar el mapa para elegir un lugar.</string>
     <string name="dlg_save_location">Guardar ubicación</string>
     <string name="dlg_change">Cambiar</string>
     <string name="dlg_your_note">Tu nota...</string>
