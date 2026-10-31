@@ -189,7 +189,9 @@ class GeminiService @Inject constructor() {
     private fun isConfigurationError(message: String): Boolean {
         val m = message.lowercase()
         return "app check" in m || "permission_denied" in m || "api has not been used" in m ||
-            "service_disabled" in m || "api key" in m
+            "service_disabled" in m || "api key" in m ||
+            // API anahtarı bu uygulamanın imzasına izin vermiyor (ör. Play imza anahtarı kısıtlamaya eklenmemiş)
+            "client application" in m && "blocked" in m
     }
 
     private fun isQuotaExhausted(e: Exception): Boolean {

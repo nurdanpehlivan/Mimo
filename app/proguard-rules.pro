@@ -16,6 +16,15 @@
 -keep class net.zetetic.database.** { *; }
 -dontwarn net.zetetic.database.**
 
+# --- Media3 / LogSessionId (Android 12 altı Journey çökmesi) ---
+# LogSessionId Android 12 (API 31) ile geldi. R8, Media3'ün bu tipte alanı olan sınıflarını (ör. DefaultAssetLoaderFactory)
+# başka sınıflarla birleştirince alanı Object yapıp okurken "check-cast LogSessionId" ekliyor; Android 10/11'de bu
+# talimat, alan boş olsa bile NoClassDefFoundError ile uygulamayı çökertiyordu. Bu sınıflar birleştirilmesin diye korunur
+# (adları yine kısaltılabilir, kullanılmıyorlarsa yine silinebilir).
+-keep,allowobfuscation,allowshrinking class * {
+    android.media.metrics.LogSessionId *;
+}
+
 # --- Hata raporları ---
 # Çökme kayıtlarında dosya adı ve satır numarası okunabilsin (Play Console bunları mapping dosyasıyla çözer)
 -keepattributes SourceFile,LineNumberTable
