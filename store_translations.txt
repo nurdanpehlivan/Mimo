@@ -1,0 +1,125 @@
+Language: English (United States) – en-US
+Title: Mimo: Journal & Life Log
+Short description: Capture your day in one place: notes, mood, meals, sleep, steps and memories.
+Full description:
+Mimo is your personal journal that brings your whole day into a single timeline. A quick note, a photo, the water you drank, the movie you watched or how you felt today: log it in a few taps and find it later in your calendar and stats.
+
+WHAT YOU CAN LOG
+• Text, mood, photos, videos, drawings and voice notes
+• Meals: snap a photo and let AI estimate the calories
+• Water, coffee, alcohol and expenses
+• Sleep and steps (automatically via Health Connect)
+• Movies and TV shows, books and music
+• To-do lists, links and places picked on the map
+
+LOOK BACK ON YOUR DAYS
+• See a summary of every day on the calendar
+• Discover your habits with weekly and monthly statistics
+• Turn your memories into a short Journey video
+
+YOUR PRIVACY COMES FIRST
+• No account, no ads
+• Your entries stay on your phone in an encrypted database
+• Lock the app with your fingerprint or screen lock if you like
+• Create an encrypted backup file and move it to a new phone easily
+
+MIMO PREMIUM
+Choose a monthly or yearly plan (yearly comes with a 7-day free trial) or a one-time lifetime purchase. Unlocks unlimited AI meal analysis and all Journey video templates. Everything else is free.
+
+Available in English, Turkish, German and Spanish.
+
+----------------------------------------
+
+Language: Turkish – tr-TR
+Title: Mimo: Günlük & Anı Defteri
+Short description: Gününü tek yerde kaydet: notlar, ruh hali, öğünler, uyku, adım ve anılar.
+Full description:
+Mimo, gününü tek bir zaman akışında toplayan kişisel günlüğündür. Bir not, bir fotoğraf, içtiğin su, izlediğin film ya da o gün nasıl hissettiğin… Hepsi birkaç dokunuşla kaydedilir, takvimde ve istatistiklerde seni bekler.
+
+NELER KAYDEDEBİLİRSİN
+• Yazı, ruh hali, fotoğraf, video, çizim ve sesli not
+• Öğünler: fotoğrafını çek, yapay zekâ kalorisini tahmin etsin
+• Su, kahve, alkol ve harcama takibi
+• Uyku ve adım (Health Connect ile otomatik)
+• İzlediğin filmler ve diziler, okuduğun kitaplar, dinlediğin müzikler
+• Yapılacaklar listeleri, bağlantılar ve haritadan seçtiğin yerler
+
+GÜNLERİNE GERİ DÖN
+• Takvimde her günün özetini gör
+• Haftalık ve aylık istatistiklerle alışkanlıklarını keşfet
+• Anılarından kısa bir Journey videosu oluştur
+
+GİZLİLİĞİN SENİN
+• Hesap yok, reklam yok
+• Kayıtların yalnızca telefonunda, şifreli veritabanında saklanır
+• İstersen uygulamayı parmak izi veya ekran kilidiyle kilitle
+• Şifreli yedek dosyası oluştur, yeni telefonuna kolayca taşı
+
+MIMO PREMIUM
+Aylık ya da yıllık plan (yıllıkta 7 gün ücretsiz deneme) veya tek seferlik ömür boyu satın alma. Sınırsız yapay zekâ öğün analizi ve tüm Journey video şablonlarını açar. Diğer tüm özellikler ücretsizdir.
+
+Türkçe, İngilizce, Almanca ve İspanyolca dillerinde kullanılabilir.
+
+----------------------------------------
+
+Language: German – de-DE
+Title: Mimo: Tagebuch & Lebenslog
+Short description: Dein Tag an einem Ort: Notizen, Stimmung, Mahlzeiten, Schlaf, Schritte, Momente.
+Full description:
+Mimo ist dein persönliches Tagebuch, das deinen ganzen Tag in einer einzigen Zeitleiste sammelt. Eine kurze Notiz, ein Foto, das Wasser, das du getrunken hast, der Film, den du gesehen hast, oder wie du dich heute fühlst: Halte es mit wenigen Tippern fest und finde es später in Kalender und Statistiken wieder.
+
+DAS KANNST DU FESTHALTEN
+• Text, Stimmung, Fotos, Videos, Zeichnungen und Sprachnotizen
+• Mahlzeiten: Foto machen und die KI die Kalorien schätzen lassen
+• Wasser, Kaffee, Alkohol und Ausgaben
+• Schlaf und Schritte (automatisch über Health Connect)
+• Filme und Serien, Bücher und Musik
+• To-do-Listen, Links und Orte, die du auf der Karte auswählst
+
+BLICK ZURÜCK AUF DEINE TAGE
+• Sieh dir im Kalender eine Zusammenfassung jedes Tages an
+• Entdecke deine Gewohnheiten mit wöchentlichen und monatlichen Statistiken
+• Mach aus deinen Erinnerungen ein kurzes Journey-Video
+
+DEINE PRIVATSPHÄRE ZUERST
+• Kein Konto, keine Werbung
+• Deine Einträge bleiben verschlüsselt auf deinem Handy
+• Sperre die App auf Wunsch mit Fingerabdruck oder Displaysperre
+• Erstelle eine verschlüsselte Sicherungsdatei und übertrage sie einfach auf ein neues Handy
+
+MIMO PREMIUM
+Wähle ein Monats- oder Jahresabo (Jahresabo mit 7 Tagen kostenlosem Test) oder einen einmaligen Kauf auf Lebenszeit. Schaltet unbegrenzte KI-Mahlzeitanalysen und alle Journey-Videovorlagen frei. Alles andere ist kostenlos.
+
+Verfügbar auf Deutsch, Englisch, Türkisch und Spanisch.
+
+----------------------------------------
+
+Language: Spanish (Spain) – es-ES
+Title: Mimo: Diario y recuerdos
+Short description: Tu día en un solo lugar: notas, ánimo, comidas, sueño, pasos y recuerdos.
+Full description:
+Mimo es tu diario personal que reúne todo tu día en una sola línea de tiempo. Una nota rápida, una foto, el agua que bebiste, la película que viste o cómo te sentiste hoy: regístralo en unos toques y encuéntralo después en tu calendario y tus estadísticas.
+
+QUÉ PUEDES REGISTRAR
+• Texto, estado de ánimo, fotos, vídeos, dibujos y notas de voz
+• Comidas: haz una foto y deja que la IA calcule las calorías
+• Agua, café, alcohol y gastos
+• Sueño y pasos (automáticamente con Health Connect)
+• Películas y series, libros y música
+• Listas de tareas, enlaces y lugares elegidos en el mapa
+
+VUELVE A TUS DÍAS
+• Mira un resumen de cada día en el calendario
+• Descubre tus hábitos con estadísticas semanales y mensuales
+• Convierte tus recuerdos en un breve vídeo Journey
+
+TU PRIVACIDAD ES LO PRIMERO
+• Sin cuenta, sin anuncios
+• Tus registros se guardan cifrados solo en tu teléfono
+• Bloquea la app con tu huella o el bloqueo de pantalla si quieres
+• Crea un archivo de copia de seguridad cifrado y pásalo fácilmente a un teléfono nuevo
+
+MIMO PREMIUM
+Elige un plan mensual o anual (el anual incluye 7 días de prueba gratis) o una compra única de por vida. Desbloquea el análisis de comidas con IA ilimitado y todas las plantillas de vídeo Journey. Todo lo demás es gratis.
+
+Disponible en español, inglés, turco y alemán.

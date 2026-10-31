@@ -467,17 +467,33 @@
 
     <!-- Mimo Premium -->
     <string name="premium_title">Mimo Premium</string>
-    <string name="premium_subtitle">Tek seferlik ödeme, ömür boyu senin</string>
+    <string name="premium_subtitle">Mimo\'nun tamamının kilidini aç</string>
     <string name="premium_reason_journey">Bu seçenek Mimo Premium’a dahil</string>
     <string name="premium_reason_meal">Bugünkü %1$d ücretsiz öğün analizi hakkın doldu. Yarın yenilenir ya da Premium ile sınırsız kullanabilirsin.</string>
     <string name="premium_benefit_journey">Tüm Journey videoları</string>
     <string name="premium_benefit_journey_desc">Bütün şablonlar ve müzikler, fotoğrafları kendin seçerek video</string>
     <string name="premium_benefit_meal">Sınırsız öğün analizi</string>
     <string name="premium_benefit_meal_desc">Ücretsiz sürümde günde %1$d analiz</string>
-    <string name="premium_benefit_once">Abonelik yok</string>
-    <string name="premium_benefit_once_desc">Bir kez öde; telefon değiştirsen de Google hesabınla geri gelir</string>
+    <string name="premium_benefit_once">Yıllık ya da ömür boyu</string>
+    <string name="premium_benefit_once_desc">Yıllık planı Google Play\'den istediğin zaman iptal et; ömür boyu tek seferlik ödenir</string>
     <string name="premium_buy">Premium’u aç</string>
     <string name="premium_buy_price">Premium’u aç · %1$s</string>
+    <!-- Premium seçenekleri: yıllık abonelik ve ömür boyu -->
+    <string name="premium_plan_yearly">Yıllık</string>
+    <string name="premium_plan_yearly_price">%1$s / yıl</string>
+    <string name="premium_plan_monthly">Aylık</string>
+    <string name="premium_plan_monthly_price">%1$s / ay</string>
+    <string name="premium_plan_lifetime">Ömür boyu</string>
+    <string name="premium_plan_lifetime_price">%1$s · tek seferlik</string>
+    <string name="premium_trial_badge">%1$d gün ücretsiz</string>
+    <string name="premium_start_trial">Ücretsiz denemeyi başlat</string>
+    <string name="premium_subscribe">Abone ol</string>
+    <string name="premium_terms_trial">%1$d gün ücretsiz, sonra yıllık %2$s. Otomatik yenilenir; Google Play\'den istediğin zaman iptal edebilirsin.</string>
+    <string name="premium_terms_yearly">Yıllık %1$s. Otomatik yenilenir; Google Play\'den istediğin zaman iptal edebilirsin.</string>
+    <string name="premium_terms_monthly">Aylık %1$s. Otomatik yenilenir; Google Play\'den istediğin zaman iptal edebilirsin.</string>
+    <string name="premium_terms_trial_monthly">%1$d gün ücretsiz, sonra aylık %2$s. Otomatik yenilenir; Google Play\'den istediğin zaman iptal edebilirsin.</string>
+    <string name="premium_manage">Aboneliği yönet</string>
+
     <string name="premium_restore">Satın alımı geri yükle</string>
     <string name="premium_later">Belki sonra</string>
     <string name="premium_badge">Premium</string>

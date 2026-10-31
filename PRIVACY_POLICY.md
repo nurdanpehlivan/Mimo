@@ -1,0 +1,121 @@
+# Mimo – Privacy Policy
+
+**Last updated:** October 19, 2026
+
+Mimo is a personal journal app. This policy explains what data Mimo handles, where it goes, and what control you have over it.
+
+## In short
+- Mimo has **no accounts, no servers of its own, no ads and no analytics**.
+- Your journal is stored **only on your device**, in an encrypted database.
+- A small number of features send data to outside services, **only when you use them**. They are listed below.
+
+## 1. Data stored on your device
+Everything you add to Mimo stays on your phone: entries, notes, to-dos, photos, voice recordings, water/sleep/step/expense records, places, your name and settings. The database is encrypted (SQLCipher, AES-256). This data is **not uploaded** to us or anyone else, and it is **excluded from Android cloud backup**.
+
+If you uninstall Mimo, all of this data is deleted.
+
+## 2. Features that send data off your device
+- **Meal analysis:** The meal photo you choose is sent to Google (Gemini, via Firebase AI Logic).
+- **Voice to text:** The voice recording you choose to transcribe is sent to Google (Gemini, via Firebase AI Logic).
+- **Map and place search:** The map view, the place name you search, and your location when you tap "my location" are sent to Google (Google Maps, Android Geocoder).
+- **Movie/TV, book and music search:** The search text you type is sent to TVmaze, Open Library and Apple iTunes Search.
+- **Link previews:** The web address you save is contacted to show its title and image.
+- **App integrity check:** A technical device/app integrity token is sent to Google (Firebase App Check, Play Integrity).
+- **Mimo Premium purchase:** Purchase information is handled by Google Play.
+
+Data is sent over encrypted connections (HTTPS). Mimo does not send your name, your other entries or your health data with these requests.
+
+**About Gemini:** Photos and recordings sent for analysis are processed by Google under its own terms. Depending on the service plan, Google may use submitted content to improve its products. If you do not want this, simply do not use meal analysis or voice to text — the rest of the app works without them.
+
+Each service's own privacy policy applies:
+- Google: https://policies.google.com/privacy
+- Apple: https://www.apple.com/legal/privacy/
+- TVmaze: https://www.tvmaze.com/site/privacy
+- Open Library (Internet Archive): https://archive.org/about/terms.php
+
+## 3. Health Connect
+With your permission, Mimo **reads** your daily step count and sleep sessions from Health Connect to show them in your journal and statistics. Mimo **never writes** to Health Connect, and this health data is **never sent off your device** or shared with anyone. You can revoke access at any time in Health Connect settings.
+
+Mimo's use of information received from Health Connect adheres to the Health Connect Permissions policy, including the Limited Use requirements.
+
+## 4. Permissions
+- **Microphone** – only when you record a voice note.
+- **Location** – only when you pick a place on the map and tap "my location".
+- **Health Connect (steps, sleep)** – read only, as described above.
+- **Internet** – for the features in section 2.
+
+All permissions are optional; you can deny them and keep using the rest of the app.
+
+## 5. Backups
+You can create a backup file yourself from Settings. It is encrypted with a password you choose (AES-256-GCM). You decide where it is saved. We cannot open it and cannot recover a lost password.
+
+## 6. Children
+Mimo is not intended for children under 18.
+
+## 7. Changes
+If this policy changes, the new version will be published on this page with a new date.
+
+## 8. Contact
+Questions or requests: **[E-POSTA ADRESİN]**
+
+---
+
+# Mimo – Gizlilik Politikası
+
+**Son güncelleme:** 19 Ekim 2026
+
+Mimo kişisel bir günlük uygulamasıdır. Bu politika, Mimo'nun hangi verileri işlediğini, bu verilerin nereye gittiğini ve senin ne kontrolün olduğunu açıklar.
+
+## Kısaca
+- Mimo'da **hesap, kendi sunucumuz, reklam ve analiz aracı yoktur**.
+- Günlüğün **yalnızca telefonunda**, şifreli bir veritabanında saklanır.
+- Birkaç özellik, **yalnızca sen kullandığında** dışarıya veri gönderir. Aşağıda listelenmiştir.
+
+## 1. Telefonunda saklanan veriler
+Mimo'ya eklediğin her şey telefonunda kalır: kayıtlar, notlar, yapılacaklar, fotoğraflar, ses kayıtları, su/uyku/adım/harcama kayıtları, yerler, adın ve ayarların. Veritabanı şifrelidir (SQLCipher, AES-256). Bu veriler bize ya da başkasına **yüklenmez** ve **Android bulut yedeklemesine dahil edilmez**.
+
+Mimo'yu silersen bu verilerin tamamı silinir.
+
+## 2. Telefondan veri gönderen özellikler
+- **Yemek analizi:** Seçtiğin yemek fotoğrafı Google'a (Gemini, Firebase AI Logic) gönderilir.
+- **Sesi yazıya çevirme:** Çevirmek istediğin ses kaydı Google'a (Gemini, Firebase AI Logic) gönderilir.
+- **Harita ve yer arama:** Harita görünümü, aradığın yer adı ve "konumum"a dokunduğunda konumun Google'a (Google Haritalar, Android Geocoder) gönderilir.
+- **Film/dizi, kitap ve müzik arama:** Yazdığın arama metni TVmaze, Open Library ve Apple iTunes Search'e gönderilir.
+- **Bağlantı önizleme:** Kaydettiğin web adresinin başlığını ve görselini göstermek için o siteye bağlanılır.
+- **Uygulama bütünlüğü kontrolü:** Teknik cihaz/uygulama doğrulama bilgisi Google'a (Firebase App Check, Play Integrity) gönderilir.
+- **Mimo Premium satın alma:** Satın alma bilgisi Google Play tarafından işlenir.
+
+Veriler şifreli bağlantıyla (HTTPS) gönderilir. Mimo bu isteklerle adını, diğer kayıtlarını veya sağlık verilerini göndermez.
+
+**Gemini hakkında:** Analiz için gönderilen fotoğraf ve ses kayıtları Google tarafından kendi şartlarına göre işlenir. Hizmet planına bağlı olarak Google gönderilen içeriği ürünlerini geliştirmek için kullanabilir. Bunu istemiyorsan yemek analizi ve sesi yazıya çevirme özelliklerini kullanma; uygulamanın geri kalanı bunlar olmadan çalışır.
+
+Her hizmetin kendi gizlilik politikası geçerlidir:
+- Google: https://policies.google.com/privacy
+- Apple: https://www.apple.com/legal/privacy/
+- TVmaze: https://www.tvmaze.com/site/privacy
+- Open Library (Internet Archive): https://archive.org/about/terms.php
+
+## 3. Health Connect
+İznin olursa Mimo, günlüğünde ve istatistiklerinde göstermek için Health Connect'ten günlük adım sayını ve uyku kayıtlarını **okur**. Mimo Health Connect'e **hiçbir şey yazmaz**; bu sağlık verileri **telefonundan çıkmaz** ve kimseyle paylaşılmaz. Erişimi istediğin zaman Health Connect ayarlarından kaldırabilirsin.
+
+Mimo'nun Health Connect'ten aldığı bilgileri kullanımı, Sınırlı Kullanım gereklilikleri dahil Health Connect İzinleri politikasına uygundur.
+
+## 4. İzinler
+- **Mikrofon** – yalnızca sesli not kaydederken.
+- **Konum** – yalnızca haritada yer seçip "konumum"a dokunduğunda.
+- **Health Connect (adım, uyku)** – yalnızca okuma, yukarıda anlatıldığı gibi.
+- **İnternet** – 2. bölümdeki özellikler için.
+
+Tüm izinler isteğe bağlıdır; reddedip uygulamanın geri kalanını kullanmaya devam edebilirsin.
+
+## 5. Yedekler
+Ayarlar'dan kendin yedek dosyası oluşturabilirsin. Dosya, senin belirlediğin şifreyle şifrelenir (AES-256-GCM) ve nereye kaydedileceğine sen karar verirsin. Biz bu dosyayı açamayız, unutulan şifreyi kurtaramayız.
+
+## 6. Çocuklar
+Mimo 18 yaşından küçükler için tasarlanmamıştır.
+
+## 7. Değişiklikler
+Bu politika değişirse yeni sürüm, yeni tarihiyle bu sayfada yayınlanır.
+
+## 8. İletişim
+Soru ve talepler için: **[E-POSTA ADRESİN]**

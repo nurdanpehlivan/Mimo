@@ -42,6 +42,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.example.logio.BuildConfig
+import com.example.logio.data.premium.PremiumManager
 import com.example.logio.R
 import android.app.Activity
 import android.content.Context
@@ -134,6 +135,7 @@ fun ProfileScreen(
     var showLanguageDialog by remember { mutableStateOf(false) }
     var lockEnabled by remember { mutableStateOf(AppLock.isEnabled(context)) }
     val isPremium by viewModel.isPremium.collectAsState()
+    val isSubscribed by viewModel.isSubscribed.collectAsState()
     var showPremiumDialog by remember { mutableStateOf(false) }
 
     // Yedekleme: önce dosya seçilir (nereye kaydedilecek / hangisi yüklenecek), sonra şifre sorulur
@@ -219,7 +221,12 @@ fun ProfileScreen(
 
                 SectionTitle(stringResource(R.string.profile_settings), stringResource(R.string.profile_settings_desc))
                 if (isPremium) {
-                    PremiumActiveRow()
+                    PremiumActiveRow(
+                        // Yıllık abonede iptal/ödeme yöntemi için Play'in abonelik sayfası açılır
+                        onManageSubscription = if (isSubscribed) {
+                            { runCatching { uriHandler.openUri(PremiumManager.manageSubscriptionUrl(context.packageName)) } }
+                        } else null
+                    )
                 } else {
                     SettingsActionRow(
                         icon = Icons.Rounded.WorkspacePremium,
@@ -1008,7 +1015,7 @@ private fun SettingsActionRow(icon: ImageVector, title: String, description: Str
 }
 
 @Composable
-private fun PremiumActiveRow() {
+private fun PremiumActiveRow(onManageSubscription: (() -> Unit)?) {
     WhiteCard {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Box(
@@ -1024,6 +1031,11 @@ private fun PremiumActiveRow() {
             Column(modifier = Modifier.weight(1f)) {
                 Text(stringResource(R.string.premium_active_title), style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.SemiBold, color = InkPrimary)
                 Text(stringResource(R.string.premium_active_desc), style = MaterialTheme.typography.labelSmall, color = InkSecondary)
+            }
+            if (onManageSubscription != null) {
+                TextButton(onClick = onManageSubscription) {
+                    Text(stringResource(R.string.premium_manage), color = MimoPurple, style = MaterialTheme.typography.labelLarge)
+                }
             }
         }
     }

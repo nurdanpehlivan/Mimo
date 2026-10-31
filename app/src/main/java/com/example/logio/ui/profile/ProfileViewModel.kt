@@ -57,6 +57,7 @@ class ProfileViewModel @Inject constructor(
 ) : ViewModel() {
 
     val isPremium: StateFlow<Boolean> = premiumManager.isPremium
+    val isSubscribed: StateFlow<Boolean> = premiumManager.isSubscribed
 
     private val _backupStatus = MutableStateFlow<BackupStatus>(BackupStatus.Idle)
     val backupStatus: StateFlow<BackupStatus> = _backupStatus.asStateFlow()

@@ -2,7 +2,10 @@
  * PremiumDialog: "Mimo Premium" tanıtım ve satın alma penceresi.
  *
  * Profil → Ayarlar'dan, Journey videosunda kilitli bir seçeneğe dokununca ve günlük ücretsiz
- * öğün analizi hakkı bitince açılır. Satın alma PremiumManager üzerinden Google Play ile yapılır.
+ * öğün analizi hakkı bitince açılır. Üç seçenek var: yıllık abonelik (uygunsa ücretsiz denemeyle), aylık abonelik
+ * ve ömür boyu.
+ * Satın alma PremiumManager üzerinden Google Play ile yapılır. Abonelikte fiyat, deneme süresi ve otomatik
+ * yenileme butonun altında açıkça yazılır (Google Play abonelik politikası bunu ister).
  */
 package com.example.logio.ui.premium
 
@@ -10,7 +13,10 @@ import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
 import android.widget.Toast
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
@@ -30,8 +36,10 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
 import com.example.logio.R
 import com.example.logio.data.premium.MealAnalysisQuota
+import com.example.logio.data.premium.PlanOffer
 import com.example.logio.data.premium.PremiumEvent
 import com.example.logio.data.premium.PremiumManager
+import com.example.logio.data.premium.PremiumPlan
 import com.example.logio.ui.theme.MimoCloud
 import com.example.logio.ui.theme.MimoNavy
 import com.example.logio.ui.theme.MimoNavyMuted
@@ -49,15 +57,15 @@ class PremiumViewModel @Inject constructor(
     private val premiumManager: PremiumManager
 ) : ViewModel() {
     val isPremium: StateFlow<Boolean> = premiumManager.isPremium
-    val price: StateFlow<String?> = premiumManager.price
+    val offers: StateFlow<Map<PremiumPlan, PlanOffer>> = premiumManager.offers
     val events: Flow<PremiumEvent> = premiumManager.events
 
     init {
-        // Fiyat pencere açılınca Play'den yeniden okunur
+        // Fiyatlar pencere açılınca Play'den yeniden okunur
         premiumManager.refresh()
     }
 
-    fun buy(activity: Activity) = premiumManager.launchPurchase(activity)
+    fun buy(activity: Activity, plan: PremiumPlan) = premiumManager.launchPurchase(activity, plan)
     fun restore() = premiumManager.refresh(userAsked = true)
 }
 
@@ -68,8 +76,16 @@ fun PremiumDialog(
     viewModel: PremiumViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
-    val price by viewModel.price.collectAsState()
+    val offers by viewModel.offers.collectAsState()
     val isPremium by viewModel.isPremium.collectAsState()
+    // Varsayılan seçim yıllık; Play'de yıllık yoksa (henüz tanımlanmadıysa) ömür boyu
+    var selected by remember { mutableStateOf(PremiumPlan.YEARLY) }
+    LaunchedEffect(offers) {
+        if (selected !in offers && offers.isNotEmpty()) selected = offers.keys.first()
+    }
+    val yearly = offers[PremiumPlan.YEARLY]
+    val monthly = offers[PremiumPlan.MONTHLY]
+    val lifetime = offers[PremiumPlan.LIFETIME]
 
     val messages = mapOf(
         PremiumEvent.PURCHASED to stringResource(R.string.premium_msg_purchased),
@@ -126,9 +142,40 @@ fun PremiumDialog(
                 BenefitRow("🍽️", stringResource(R.string.premium_benefit_meal), stringResource(R.string.premium_benefit_meal_desc, MealAnalysisQuota.FREE_DAILY_LIMIT))
                 Spacer(modifier = Modifier.height(8.dp))
                 BenefitRow("💜", stringResource(R.string.premium_benefit_once), stringResource(R.string.premium_benefit_once_desc))
-                Spacer(modifier = Modifier.height(18.dp))
+                Spacer(modifier = Modifier.height(16.dp))
+                if (yearly != null) {
+                    PlanCard(
+                        title = stringResource(R.string.premium_plan_yearly),
+                        price = stringResource(R.string.premium_plan_yearly_price, yearly.price),
+                        badge = yearly.freeTrialDays?.let { stringResource(R.string.premium_trial_badge, it) },
+                        selected = selected == PremiumPlan.YEARLY,
+                        onClick = { selected = PremiumPlan.YEARLY }
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                }
+                if (monthly != null) {
+                    PlanCard(
+                        title = stringResource(R.string.premium_plan_monthly),
+                        price = stringResource(R.string.premium_plan_monthly_price, monthly.price),
+                        badge = monthly.freeTrialDays?.let { stringResource(R.string.premium_trial_badge, it) },
+                        selected = selected == PremiumPlan.MONTHLY,
+                        onClick = { selected = PremiumPlan.MONTHLY }
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                }
+                if (lifetime != null) {
+                    PlanCard(
+                        title = stringResource(R.string.premium_plan_lifetime),
+                        price = stringResource(R.string.premium_plan_lifetime_price, lifetime.price),
+                        badge = null,
+                        selected = selected == PremiumPlan.LIFETIME,
+                        onClick = { selected = PremiumPlan.LIFETIME }
+                    )
+                }
+                Spacer(modifier = Modifier.height(16.dp))
+                val chosen = offers[selected]
                 Button(
-                    onClick = { context.findActivity()?.let { viewModel.buy(it) } },
+                    onClick = { context.findActivity()?.let { viewModel.buy(it, selected) } },
                     colors = ButtonDefaults.buttonColors(containerColor = MimoPurple),
                     shape = RoundedCornerShape(16.dp),
                     modifier = Modifier
@@ -136,8 +183,29 @@ fun PremiumDialog(
                         .height(52.dp)
                 ) {
                     Text(
-                        text = price?.let { stringResource(R.string.premium_buy_price, it) } ?: stringResource(R.string.premium_buy),
+                        text = when {
+                            chosen == null -> stringResource(R.string.premium_buy)
+                            chosen.plan != PremiumPlan.LIFETIME && chosen.freeTrialDays != null -> stringResource(R.string.premium_start_trial)
+                            chosen.plan != PremiumPlan.LIFETIME -> stringResource(R.string.premium_subscribe)
+                            else -> stringResource(R.string.premium_buy_price, chosen.price)
+                        },
                         fontWeight = FontWeight.SemiBold
+                    )
+                }
+                // Abonelik koşulları: ne zaman, ne kadar ücret alınacağı ve nasıl iptal edileceği
+                if (chosen != null && chosen.plan != PremiumPlan.LIFETIME) {
+                    val monthlyPlan = chosen.plan == PremiumPlan.MONTHLY
+                    Text(
+                        text = when {
+                            chosen.freeTrialDays != null && monthlyPlan -> stringResource(R.string.premium_terms_trial_monthly, chosen.freeTrialDays, chosen.price)
+                            chosen.freeTrialDays != null -> stringResource(R.string.premium_terms_trial, chosen.freeTrialDays, chosen.price)
+                            monthlyPlan -> stringResource(R.string.premium_terms_monthly, chosen.price)
+                            else -> stringResource(R.string.premium_terms_yearly, chosen.price)
+                        },
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MimoNavyMuted,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.padding(top = 8.dp)
                     )
                 }
                 TextButton(onClick = { viewModel.restore() }) {
@@ -150,6 +218,38 @@ fun PremiumDialog(
             TextButton(onClick = onDismiss) { Text(stringResource(R.string.premium_later), color = Color(0xFF64748B)) }
         }
     )
+}
+
+/** Bir satın alma seçeneği: seçiliyse mor çerçeveli. [badge] örn. "7 gün ücretsiz". */
+@Composable
+private fun PlanCard(title: String, price: String, badge: String?, selected: Boolean, onClick: () -> Unit) {
+    Surface(
+        shape = RoundedCornerShape(16.dp),
+        color = if (selected) MimoCloud else Color.White,
+        border = BorderStroke(if (selected) 2.dp else 1.dp, if (selected) MimoPurple else Color(0xFFE5E0F2)),
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick)
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(end = 12.dp, top = 6.dp, bottom = 6.dp)) {
+            RadioButton(selected = selected, onClick = onClick, colors = RadioButtonDefaults.colors(selectedColor = MimoPurple))
+            Column(modifier = Modifier.weight(1f)) {
+                Text(title, style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold, color = MimoNavy)
+                Text(price, style = MaterialTheme.typography.bodySmall, color = MimoNavyMuted)
+            }
+            if (badge != null) {
+                Text(
+                    text = badge,
+                    style = MaterialTheme.typography.labelSmall,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White,
+                    modifier = Modifier
+                        .background(MimoPurple, RoundedCornerShape(8.dp))
+                        .padding(horizontal = 8.dp, vertical = 3.dp)
+                )
+            }
+        }
+    }
 }
 
 @Composable

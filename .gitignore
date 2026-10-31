@@ -32,3 +32,7 @@ app/google-services.json
 
 # Kişisel geliştirme notları
 GELISTIRME_NOTLARI.md
+
+# Java/Gradle çökme kayıtları (bilgisayara özel yollar ve ortam bilgisi içerir)
+hs_err_pid*.log
+replay_pid*.log

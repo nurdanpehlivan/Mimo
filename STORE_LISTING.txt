@@ -1,0 +1,70 @@
+=============================== TÜRKÇE (tr-TR) ===============================
+
+UYGULAMA ADI (30)
+Mimo: Günlük & Anı Defteri
+
+KISA AÇIKLAMA (80)
+Gününü tek yerde kaydet: notlar, ruh hali, öğünler, uyku, adım ve anılar.
+
+TAM AÇIKLAMA
+Mimo, gününü tek bir zaman akışında toplayan kişisel günlüğündür. Bir not, bir fotoğraf, içtiğin su, izlediğin film ya da o gün nasıl hissettiğin… Hepsi birkaç dokunuşla kaydedilir, takvimde ve istatistiklerde seni bekler.
+
+NELER KAYDEDEBİLİRSİN
+• Yazı, ruh hali, fotoğraf, video, çizim ve sesli not
+• Öğünler: fotoğrafını çek, yapay zekâ kalorisini tahmin etsin
+• Su, kahve, alkol ve harcama takibi
+• Uyku ve adım (Health Connect ile otomatik)
+• İzlediğin filmler ve diziler, okuduğun kitaplar, dinlediğin müzikler
+• Yapılacaklar listeleri, bağlantılar ve haritadan seçtiğin yerler
+
+GÜNLERİNE GERİ DÖN
+• Takvimde her günün özetini gör
+• Haftalık ve aylık istatistiklerle alışkanlıklarını keşfet
+• Anılarından kısa bir Journey videosu oluştur
+
+GİZLİLİĞİN SENİN
+• Hesap yok, reklam yok
+• Kayıtların yalnızca telefonunda, şifreli veritabanında saklanır
+• İstersen uygulamayı parmak izi veya ekran kilidiyle kilitle
+• Şifreli yedek dosyası oluştur, yeni telefonuna kolayca taşı
+
+MIMO PREMIUM
+Aylık ya da yıllık plan (yıllıkta 7 gün ücretsiz deneme) veya tek seferlik ömür boyu satın alma. Sınırsız yapay zekâ öğün analizi ve tüm Journey video şablonlarını açar. Diğer tüm özellikler ücretsizdir.
+
+Türkçe, İngilizce, Almanca ve İspanyolca dillerinde kullanılabilir.
+
+
+============================== ENGLISH (en-US) ===============================
+
+APP NAME (30)
+Mimo: Journal & Life Log
+
+SHORT DESCRIPTION (80)
+Capture your day in one place: notes, mood, meals, sleep, steps and memories.
+
+FULL DESCRIPTION
+Mimo is your personal journal that brings your whole day into a single timeline. A quick note, a photo, the water you drank, the movie you watched or how you felt today: log it in a few taps and find it later in your calendar and stats.
+
+WHAT YOU CAN LOG
+• Text, mood, photos, videos, drawings and voice notes
+• Meals: snap a photo and let AI estimate the calories
+• Water, coffee, alcohol and expenses
+• Sleep and steps (automatically via Health Connect)
+• Movies and TV shows, books and music
+• To-do lists, links and places picked on the map
+
+LOOK BACK ON YOUR DAYS
+• See a summary of every day on the calendar
+• Discover your habits with weekly and monthly statistics
+• Turn your memories into a short Journey video
+
+YOUR PRIVACY COMES FIRST
+• No account, no ads
+• Your entries stay on your phone in an encrypted database
+• Lock the app with your fingerprint or screen lock if you like
+• Create an encrypted backup file and move it to a new phone easily
+
+MIMO PREMIUM
+Choose a monthly or yearly plan (yearly comes with a 7-day free trial) or a one-time lifetime purchase. Unlocks unlimited AI meal analysis and all Journey video templates. Everything else is free.
+
+Available in English, Turkish, German and Spanish.

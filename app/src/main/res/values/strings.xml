@@ -454,17 +454,33 @@
 
     <!-- Mimo Premium -->
     <string name="premium_title">Mimo Premium</string>
-    <string name="premium_subtitle">Pay once, yours forever</string>
+    <string name="premium_subtitle">Unlock everything in Mimo</string>
     <string name="premium_reason_journey">This option is part of Mimo Premium</string>
     <string name="premium_reason_meal">You’ve used today’s %1$d free meal analyses. They reset tomorrow, or go unlimited with Premium.</string>
     <string name="premium_benefit_journey">All Journey videos</string>
     <string name="premium_benefit_journey_desc">Every template and track, plus videos from photos you pick</string>
     <string name="premium_benefit_meal">Unlimited meal analysis</string>
     <string name="premium_benefit_meal_desc">Free version: %1$d analyses a day</string>
-    <string name="premium_benefit_once">No subscription</string>
-    <string name="premium_benefit_once_desc">Pay once; it comes back with your Google account on a new phone</string>
+    <string name="premium_benefit_once">Yearly or lifetime</string>
+    <string name="premium_benefit_once_desc">Cancel the yearly plan anytime in Google Play; lifetime is a one-time payment</string>
     <string name="premium_buy">Unlock Premium</string>
     <string name="premium_buy_price">Unlock Premium · %1$s</string>
+    <!-- Premium seçenekleri: yıllık abonelik ve ömür boyu -->
+    <string name="premium_plan_yearly">Yearly</string>
+    <string name="premium_plan_yearly_price">%1$s / year</string>
+    <string name="premium_plan_monthly">Monthly</string>
+    <string name="premium_plan_monthly_price">%1$s / month</string>
+    <string name="premium_plan_lifetime">Lifetime</string>
+    <string name="premium_plan_lifetime_price">%1$s · one-time</string>
+    <string name="premium_trial_badge">%1$d days free</string>
+    <string name="premium_start_trial">Start free trial</string>
+    <string name="premium_subscribe">Subscribe</string>
+    <string name="premium_terms_trial">Free for %1$d days, then %2$s per year. Renews automatically; cancel anytime in Google Play.</string>
+    <string name="premium_terms_yearly">%1$s per year. Renews automatically; cancel anytime in Google Play.</string>
+    <string name="premium_terms_monthly">%1$s per month. Renews automatically; cancel anytime in Google Play.</string>
+    <string name="premium_terms_trial_monthly">Free for %1$d days, then %2$s per month. Renews automatically; cancel anytime in Google Play.</string>
+    <string name="premium_manage">Manage subscription</string>
+
     <string name="premium_restore">Restore purchase</string>
     <string name="premium_later">Maybe later</string>
     <string name="premium_badge">Premium</string>
